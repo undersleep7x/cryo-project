@@ -1,60 +1,104 @@
 package services
 
 import (
-	"fmt"
-	"log"
-	"strings"
 	"context"
 	"encoding/json"
+	"fmt"
+	"os"
+	"log"
+	"strings"
 	"time"
 
+	"github.com/go-redis/redis/v8"
 	"github.com/go-resty/resty/v2"
 	"github.com/tidwall/gjson"
-	"github.com/go-redis/redis/v8"
+	"gopkg.in/yaml.v3"
 )
 
-var ctx = context.Background()
+type Config struct {
+	Redis struct {
+		Address string `yaml:"address"`
+	} `yaml:"redis"`
+}
+
+func loadConfig() Config {
+	var config Config
+	data, err := os.ReadFile("config/local_config.yml")
+	if err != nil {
+		log.Fatalf("Failed to read config file %v", err)
+	}
+	err = yaml.Unmarshal(data, &config)
+	if err != nil {
+		log.Fatalf("Failed to parse YAML: %v", err)
+	}
+	return config
+}
+
+var config = loadConfig()
 var redisClient = redis.NewClient(&redis.Options{
-	Addr: "localhost:6379",
+	Addr: config.Redis.Address,
 })
 
 func FetchCryptoPrice(cryptoSymbols []string, currency string) (map[string]float64, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
 	client := resty.New()
-	cryptoQuery := strings.Join(cryptoSymbols, ",")
-
-	cacheKey := fmt.Sprintf("prices:%s:%s", cryptoQuery, currency)
-	cachedData, err := redisClient.Get(ctx, cacheKey).Result()
-	if err != nil {
-		var cachedPrices map[string]float64
-		json.Unmarshal([]byte(cachedData), &cachedPrices)
-		log.Println("Returning cached price data")
-		return cachedPrices, nil
-	}
-
-	url := fmt.Sprintf("https://api.coingecko.com/api/v3/simple/price?ids=%s&vs_currencies=%s", cryptoQuery, currency)
-
-	resp, err := client.R().Get(url)
-	if err != nil {
-		log.Println("API Error, returning fallback data")
-		return map[string]float64{"bitcoin": -1, "ethereum": -1, "monero": -1}, nil
-	}
-
-	if !resp.IsSuccess() {
-		return nil, fmt.Errorf("API Request Failed %s", resp.Status())
-	}
-
 	priceData := make(map[string]float64)
+	var missingCryptos []string
+
 	for _, crypto := range cryptoSymbols {
-		price := gjson.Get(resp.String(), fmt.Sprintf("%s.%s", crypto, currency))
-		if price.Exists() {
-			priceData[crypto] = price.Float()
+		cacheKey := fmt.Sprintf("prices:%s:%s", crypto, currency)
+		cachedData, err := redisClient.Get(ctx, cacheKey).Result()
+
+		if err == nil {
+			var cachedPrice map[string]float64
+			err := json.Unmarshal([]byte(cachedData), &cachedPrice)
+
+			if err != nil {
+				log.Printf("Failed to parse Redis JSON for %s: %v", crypto, err)
+			} else {
+				log.Printf("Successfully retrieved cached price data for %s", crypto)
+				priceData[crypto] = cachedPrice[crypto]
+				continue
+			}
+		} else if err == redis.Nil {
+			log.Printf("No cache for %s in Redis cache, fetching with API", crypto)
+			missingCryptos = append(missingCryptos, crypto)
 		} else {
-			log.Printf("Price for %s not found", crypto)
+			log.Printf("Redis error for %s: %v", crypto, err)
+			missingCryptos = append(missingCryptos, crypto)
 		}
 	}
 
-	cacheData, _ := json.Marshal(priceData)
-	redisClient.Set(ctx, cacheKey, cacheData, 30*time.Second)
+	if len(missingCryptos) > 0 {
+		apiQuery := strings.Join(missingCryptos, ",")
+		url := fmt.Sprintf("https://api.coingecko.com/api/v3/simple/price?ids=%s&vs_currencies=%s", apiQuery, currency)
+		resp, err := client.R().Get(url)
+
+		if err != nil || !resp.IsSuccess() {
+			log.Printf("API failure, some prices may be missing: %v", err)
+			for _, crypto := range missingCryptos {
+				priceData[crypto] = -1
+			}
+		} else {
+			for _, crypto := range missingCryptos {
+				price := gjson.Get(resp.String(), fmt.Sprintf("%s.%s", crypto, currency))
+				if price.Exists() {
+					priceData[crypto] = price.Float()
+					cacheKey := fmt.Sprintf("prices:%s:%s", crypto, currency)
+					cachedEntry, _ := json.Marshal(map[string]float64{crypto: price.Float()})
+					err := redisClient.Set(ctx, cacheKey, cachedEntry, 30*time.Second).Err()
+					if err != nil {
+						log.Printf("Failed to cache price for %s: %v", crypto, err)
+					}
+				} else {
+					log.Printf("Price for %s not found in API", crypto)
+					priceData[crypto] = -1
+				}
+			}
+		}
+	}
 
 	return priceData, nil
 }
