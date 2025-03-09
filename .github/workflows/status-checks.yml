@@ -1,4 +1,4 @@
-name: Status Checks
+name: Status Checks  # Workflow name
 
 on:
   pull_request:
@@ -8,29 +8,31 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest  # Runs the workflow on an Ubuntu machine
+
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v3  # Clones the repository
 
       - name: Setup Go
         uses: actions/setup-go@v3
         with:
-          go-version: 1.20  # Ensure the correct Go version is installed
+          go-version: 1.20  # Ensures Go 1.20 is installed
 
       - name: Install Dependencies
         run: |
-          go version  # Verify Go installation
-          go mod tidy  # Ensure dependencies are updated
+          go version  # Check if Go is installed
+          go mod tidy  # Ensure dependencies are properly updated
 
       - name: Run Tests
-        run: go test ./...
+        run: go test ./...  # Runs unit tests
 
   lint:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest  # Separate job for linting
+
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v3  # Clone repository again
 
       - name: Setup Go
         uses: actions/setup-go@v3
@@ -40,7 +42,9 @@ jobs:
       - name: Install GolangCI-Lint
         run: |
           go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
-          echo "$HOME/go/bin" >> $GITHUB_PATH  # Ensure linter is in PATH
+          echo "$HOME/go/bin" >> $GITHUB_PATH  # Ensure the linter is in PATH
+          export PATH=$PATH:$(go env GOPATH)/bin  # Extra step for safety
+          golangci-lint --version  # Debugging step
 
       - name: Run Linter
-        run: golangci-lint run ./...
+        run: golangci-lint run ./...  # Runs the linter on all Go files
