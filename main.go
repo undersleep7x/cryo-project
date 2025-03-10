@@ -1,20 +1,32 @@
 package main
 
+//start backend service
 import(
+	"fmt"
 	"log"
+	"net/http"
 
-	"github.com/gin-gonic/gin"
 	"github.com/undersleep7x/cryptowallet-v0.1/routes"
+	"github.com/undersleep7x/cryptowallet-v0.1/app"
 )
 
-func main() {
-	router := gin.Default()
+func startServer() *http.Server {
+	app.InitApp() //kicks off initialization of necessary precursors like redis and logging
 
-	routes.SetupRoutes(router) //register the routes associated with this application
+	routes.SetupRoutes(app.Router) //register the routes associated with this application
 
-	log.Println("Server is now running on port 8080")
-	err := router.Run(":8080")
-	if err != nil {
-		log.Fatalf("Failed to start server on port 8080: %v", err)
+	port := app.Config.App.Port
+	server := &http.Server{
+		Addr: fmt.Sprintf(":%s", port),
+		Handler: app.Router,
 	}
+	log.Printf("Server is now running on port %s", port)
+	return server
+
+}
+
+
+func main() {
+	server := startServer()
+	log.Fatal(server.ListenAndServe())
 }

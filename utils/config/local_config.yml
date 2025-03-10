@@ -1,0 +1,24 @@
+app:
+  name: "CryptoWallet"
+  environment: "development"
+  log_level: "debug"
+  port: "8080"
+
+redis:
+  address: "localhost:6379"
+  password: ""
+  db: 0
+  timeout: 10
+  ttl: 30
+
+coingecko:
+  base_url: "https://api.coingecko.com/api/v3"
+  timeout: 5
+  retry_attempts: 3
+
+logging:
+  file_path: "logs/apps.log"
+  max_size: 10
+  max_backups: 5
+  max_age: 7
+  permissions: 0666
