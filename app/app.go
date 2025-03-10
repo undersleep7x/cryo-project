@@ -55,10 +55,10 @@ func loadConfig() {
 		env = "local"
 	}
 
-	configFile := fmt.Sprintf("config/%s_config.yml", env)
+	configFile := fmt.Sprintf("utils/config/%s_config.yml", env)
 
 	log.Printf("Loading config: %s", configFile)
-	data, err := os.ReadFile("utils/config/local_config.yml")
+	data, err := os.ReadFile(configFile)
 	if err != nil {
 		log.Fatalf("Failed to read config file %v", err)
 	}

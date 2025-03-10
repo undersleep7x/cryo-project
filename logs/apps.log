@@ -28,3 +28,116 @@
 2025/03/09 23:56:04 app.go:112: Setting router...
 2025/03/09 23:56:04 app.go:114: App initialized
 2025/03/09 23:56:04 main.go:23: Server is now running on port 8080
+2025/03/10 11:28:19 app.go:102: Logger initialized
+2025/03/10 11:28:19 app.go:110: Loading Redis cache...
+2025/03/10 11:28:19 app.go:86: Redis connected successfully
+2025/03/10 11:28:19 app.go:112: Setting router...
+2025/03/10 11:28:19 app.go:114: App initialized
+2025/03/10 11:28:19 main.go:23: Server is now running on port 8080
+2025/03/10 11:44:13 app.go:102: Logger initialized
+2025/03/10 11:44:13 app.go:110: Loading Redis cache...
+2025/03/10 11:44:13 app.go:86: Redis connected successfully
+2025/03/10 11:44:13 app.go:112: Setting router...
+2025/03/10 11:44:13 app.go:114: App initialized
+2025/03/10 11:44:13 main.go:23: Server is now running on port 8080
+2025/03/10 11:44:27 app.go:102: Logger initialized
+2025/03/10 11:44:27 app.go:110: Loading Redis cache...
+2025/03/10 11:44:27 app.go:86: Redis connected successfully
+2025/03/10 11:44:27 app.go:112: Setting router...
+2025/03/10 11:44:27 app.go:114: App initialized
+2025/03/10 11:44:27 main.go:23: Server is now running on port 8080
+2025/03/10 13:07:43 price_service.go:36: No cache for BTC in Redis cache, fetching with API
+2025/03/10 13:07:43 price_service.go:36: No cache for ETH in Redis cache, fetching with API
+2025/03/10 13:07:43 coingecko.go:20: Making API call to https://api.coingecko.com/api/v3/simple/price?ids=BTC,ETH&vs_currencies=USD
+2025/03/10 13:07:46 price_service.go:65: Price for BTC not found in API, setting fallback price
+2025/03/10 13:07:46 price_service.go:65: Price for ETH not found in API, setting fallback price
+2025/03/10 13:08:03 price_service.go:36: No cache for btc in Redis cache, fetching with API
+2025/03/10 13:08:03 price_service.go:36: No cache for eth in Redis cache, fetching with API
+2025/03/10 13:08:03 coingecko.go:20: Making API call to https://api.coingecko.com/api/v3/simple/price?ids=btc,eth&vs_currencies=USD
+2025/03/10 13:08:04 price_service.go:65: Price for btc not found in API, setting fallback price
+2025/03/10 13:08:04 price_service.go:65: Price for eth not found in API, setting fallback price
+2025/03/10 13:08:41 price_service.go:36: No cache for btc in Redis cache, fetching with API
+2025/03/10 13:08:41 price_service.go:36: No cache for eth in Redis cache, fetching with API
+2025/03/10 13:08:41 coingecko.go:20: Making API call to https://api.coingecko.com/api/v3/simple/price?ids=btc,eth&vs_currencies=USD
+2025/03/10 13:08:41 price_service.go:65: Price for btc not found in API, setting fallback price
+2025/03/10 13:08:41 price_service.go:65: Price for eth not found in API, setting fallback price
+2025/03/10 13:08:50 price_service.go:36: No cache for monero in Redis cache, fetching with API
+2025/03/10 13:08:50 price_service.go:36: No cache for bitcoin in Redis cache, fetching with API
+2025/03/10 13:08:50 price_service.go:36: No cache for ethereum in Redis cache, fetching with API
+2025/03/10 13:08:50 price_service.go:36: No cache for doge in Redis cache, fetching with API
+2025/03/10 13:08:50 coingecko.go:20: Making API call to https://api.coingecko.com/api/v3/simple/price?ids=monero,bitcoin,ethereum,doge&vs_currencies=usd
+2025/03/10 13:08:58 price_service.go:36: No cache for btc in Redis cache, fetching with API
+2025/03/10 13:08:58 price_service.go:36: No cache for eth in Redis cache, fetching with API
+2025/03/10 13:08:58 coingecko.go:20: Making API call to https://api.coingecko.com/api/v3/simple/price?ids=btc,eth&vs_currencies=usd
+2025/03/10 13:08:59 price_service.go:65: Price for btc not found in API, setting fallback price
+2025/03/10 13:08:59 price_service.go:65: Price for eth not found in API, setting fallback price
+2025/03/10 13:10:11 price_service.go:36: No cache for bitcoin in Redis cache, fetching with API
+2025/03/10 13:10:11 price_service.go:36: No cache for ethereum in Redis cache, fetching with API
+2025/03/10 13:10:11 coingecko.go:20: Making API call to https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_currencies=usd
+2025/03/10 13:10:15 price_service.go:32: Successfully retrieved cached price data for bitcoin
+2025/03/10 13:10:15 price_service.go:32: Successfully retrieved cached price data for ethereum
+2025/03/10 13:24:47 app.go:102: Logger initialized
+2025/03/10 13:24:47 app.go:110: Loading Redis cache...
+2025/03/10 13:24:47 app.go:86: Redis connected successfully
+2025/03/10 13:24:47 app.go:112: Setting router...
+2025/03/10 13:24:47 app.go:114: App initialized
+2025/03/10 13:24:47 main.go:23: Server is now running on port 8080
+2025/03/10 13:24:55 app.go:102: Logger initialized
+2025/03/10 13:24:55 app.go:110: Loading Redis cache...
+2025/03/10 13:24:55 app.go:86: Redis connected successfully
+2025/03/10 13:24:55 app.go:112: Setting router...
+2025/03/10 13:24:55 app.go:114: App initialized
+2025/03/10 13:24:55 main.go:23: Server is now running on port 8080
+2025/03/10 13:25:13 price_service.go:37: No cache for bitcoin in Redis cache, fetching with API
+2025/03/10 13:25:13 price_service.go:37: No cache for ethereum in Redis cache, fetching with API
+2025/03/10 13:25:13 coingecko.go:20: Making API call to https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_currencies=usd
+2025/03/10 13:25:18 price_service.go:33: Successfully retrieved cached price data for bitcoin
+2025/03/10 13:25:18 price_service.go:33: Successfully retrieved cached price data for ethereum
+2025/03/10 13:26:07 app.go:102: Logger initialized
+2025/03/10 13:26:07 app.go:110: Loading Redis cache...
+2025/03/10 13:26:07 app.go:86: Redis connected successfully
+2025/03/10 13:26:07 app.go:112: Setting router...
+2025/03/10 13:26:07 app.go:114: App initialized
+2025/03/10 13:26:07 main.go:23: Server is now running on port 8080
+2025/03/10 13:26:14 app.go:102: Logger initialized
+2025/03/10 13:26:14 app.go:110: Loading Redis cache...
+2025/03/10 13:26:14 app.go:86: Redis connected successfully
+2025/03/10 13:26:14 app.go:112: Setting router...
+2025/03/10 13:26:14 app.go:114: App initialized
+2025/03/10 13:26:14 main.go:23: Server is now running on port 8080
+2025/03/10 13:28:56 app.go:102: Logger initialized
+2025/03/10 13:28:56 app.go:110: Loading Redis cache...
+2025/03/10 13:28:56 app.go:86: Redis connected successfully
+2025/03/10 13:28:56 app.go:112: Setting router...
+2025/03/10 13:28:56 app.go:114: App initialized
+2025/03/10 13:28:56 main.go:23: Server is now running on port 8080
+2025/03/10 13:29:00 app.go:102: Logger initialized
+2025/03/10 13:29:00 app.go:110: Loading Redis cache...
+2025/03/10 13:29:00 app.go:86: Redis connected successfully
+2025/03/10 13:29:00 app.go:112: Setting router...
+2025/03/10 13:29:00 app.go:114: App initialized
+2025/03/10 13:29:00 main.go:23: Server is now running on port 8080
+2025/03/10 13:41:05 app.go:102: Logger initialized
+2025/03/10 13:41:05 app.go:110: Loading Redis cache...
+2025/03/10 13:41:05 app.go:86: Redis connected successfully
+2025/03/10 13:41:05 app.go:112: Setting router...
+2025/03/10 13:41:05 app.go:114: App initialized
+2025/03/10 13:41:05 main.go:23: Server is now running on port 8080
+2025/03/10 13:41:39 app.go:102: Logger initialized
+2025/03/10 13:41:39 app.go:110: Loading Redis cache...
+2025/03/10 13:41:39 app.go:86: Redis connected successfully
+2025/03/10 13:41:39 app.go:112: Setting router...
+2025/03/10 13:41:39 app.go:114: App initialized
+2025/03/10 13:41:39 main.go:23: Server is now running on port 8080
+2025/03/10 13:49:11 app.go:102: Logger initialized
+2025/03/10 13:49:11 app.go:110: Loading Redis cache...
+2025/03/10 13:49:11 app.go:86: Redis connected successfully
+2025/03/10 13:49:11 app.go:112: Setting router...
+2025/03/10 13:49:11 app.go:114: App initialized
+2025/03/10 13:49:11 main.go:23: Server is now running on port 8080
+2025/03/10 13:50:37 app.go:102: Logger initialized
+2025/03/10 13:50:37 app.go:110: Loading Redis cache...
+2025/03/10 13:50:37 app.go:86: Redis connected successfully
+2025/03/10 13:50:37 app.go:112: Setting router...
+2025/03/10 13:50:37 app.go:114: App initialized
+2025/03/10 13:50:37 main.go:23: Server is now running on port 8080
