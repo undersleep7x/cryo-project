@@ -10,7 +10,7 @@ import (
 	"github.com/go-resty/resty/v2"
 )
 
-func FetchPrices (cryptos []string, currency string) (*resty.Response, error){
+var FetchPrices = func(cryptos []string, currency string) (*resty.Response, error){
 	client := resty.New()
 	timeout := time.Duration(app.Config.CoinGecko.Timeout)*time.Second
 	client.SetTimeout(timeout)

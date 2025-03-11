@@ -9,7 +9,7 @@ import (
 )
 
 type mockPriceFetcher struct {
-	result interface{}
+	result any
 	err error
 }
 
