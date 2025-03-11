@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"strings"
 	"encoding/json"
-	// "log"
+	"log"
 
 	"github.com/undersleep7x/cryptowallet-v0.1/services"
 )
@@ -22,7 +22,13 @@ func (d defaultPriceFetcher) FetchCryptoPrice(cryptoList []string, currency stri
 
 //handle /ping route call and return ok to confirm healthy service
 var Ping = func(w http.ResponseWriter, r *http.Request) {
-	json.NewEncoder(w).Encode(map[string]string{"status": "ok"}) //returns 200 OK when hit for healthcheck
+	err := json.NewEncoder(w).Encode(map[string]string{"status": "ok"}) //returns 200 OK when hit for healthcheck
+	if err != nil{
+		http.Error(w, "Please try again later", http.StatusInternalServerError)
+		log.Printf("JSON encoding error: %v", err)
+		return
+	}
+
 }
 
 // handle /price route call and return latest prices from coingecko 
@@ -48,5 +54,10 @@ var FetchPrices = func(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	json.NewEncoder(w).Encode(prices) // return prices json
+	if err := json.NewEncoder(w).Encode(prices); err != nil {
+		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+		log.Printf("Json encoding error: %v", err)
+		return
+	} // return prices json
+	
 }

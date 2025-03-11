@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"log"
 
 	"github.com/gorilla/mux"
 	"github.com/undersleep7x/cryptowallet-v0.1/handlers"
@@ -12,7 +13,10 @@ import (
 //setup dummy response for calls to handler
 func dummyHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte(`{"dummy": "response"}`))
+	_, err := w.Write([]byte(`{"dummy": "response"}`))
+	if err != nil {
+		log.Printf("Failed to write response: %v", err)
+	}
 }
 
 func TestPingRoute(t *testing.T) {
