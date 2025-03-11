@@ -41,7 +41,7 @@ jobs:
         run: |
           echo "Checking Redis availability..."
           for i in {1..10}; do
-            if redis-cli ping | grep +PONG; then
+            if redis-cli ping | grep PONG; then
               echo "Redis is up!"
               exit 0
             fi
