@@ -44,8 +44,27 @@ type ConfigStruct struct { //utilize config files to start app services
 	} `yaml:"coingecko"` //create coingecko api struct
 }
 
+type RedisClientWrapper struct {
+	client *redis.Client
+}
+
+func (r *RedisClientWrapper) Get(ctx context.Context, key string) (string, error) {
+	return r.client.Get(ctx, key).Result()
+}
+func (r *RedisClientWrapper) Set(ctx context.Context, key string, value interface{}, expiration time.Duration) error {
+	return r.client.Set(ctx, key, value, expiration).Err()
+}
+func (r *RedisClientWrapper) Ping(ctx context.Context) error {
+	return r.client.Ping(ctx).Err()
+}
+type RedisClientInterface interface {
+	Get(ctx context.Context, key string) (string, error)
+	Set(ctx context.Context, key string, value interface{}, expiration time.Duration) error
+	Ping(ctx context.Context) error
+}
+
 var Config ConfigStruct
-var RedisClient *redis.Client
+var RedisClient RedisClientInterface
 var Router *mux.Router
 
 func loadConfig() {
@@ -70,7 +89,7 @@ func loadConfig() {
 }
 
 func setupRedis() {
-	RedisClient = redis.NewClient(&redis.Options{
+	client := redis.NewClient(&redis.Options{
 		Addr: Config.Redis.Address,
 		Password: Config.Redis.Password,
 		DB: Config.Redis.DB,
@@ -79,12 +98,13 @@ func setupRedis() {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	_, err := RedisClient.Ping(ctx).Result()
+	_, err := client.Ping(ctx).Result()
 	if err != nil {
 		log.Fatalf("Redis connection failed: %v", err)
 	} else {
 		log.Println("Redis connected successfully")
 	}
+	RedisClient = &RedisClientWrapper{client: client}
 }
 
 func setupLogging() {

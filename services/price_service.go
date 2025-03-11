@@ -22,7 +22,7 @@ var FetchCryptoPrice = func(cryptoSymbols []string, currency string) (map[string
 
 	for _, crypto := range cryptoSymbols {
 		cacheKey := fmt.Sprintf("prices:%s:%s", crypto, currency)
-		cachedData, err := app.RedisClient.Get(ctx, cacheKey).Result()
+		cachedData, err := app.RedisClient.Get(ctx, cacheKey)
 
 		if err == nil {
 			var cachedPrice map[string]float64
@@ -58,7 +58,7 @@ var FetchCryptoPrice = func(cryptoSymbols []string, currency string) (map[string
 					priceData[crypto] = price.Float()
 					cacheKey := fmt.Sprintf("prices:%s:%s", crypto, currency)
 					cachedEntry, _ := json.Marshal(map[string]float64{crypto: price.Float()})
-					err := app.RedisClient.Set(ctx, cacheKey, cachedEntry, 30*time.Second).Err()
+					err := app.RedisClient.Set(ctx, cacheKey, cachedEntry, 30*time.Second)
 					if err != nil {
 						log.Printf("Failed to cache price for %s: %v", crypto, err)
 					}

@@ -77,7 +77,7 @@ func TestSetupRedis(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	_, err := RedisClient.Ping(ctx).Result()
+	err := RedisClient.Ping(ctx)
 	if err != nil {
 		t.Fatalf("Redis connection failed: %v", err)
 	}
