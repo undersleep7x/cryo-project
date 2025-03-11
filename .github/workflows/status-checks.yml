@@ -34,6 +34,9 @@ jobs:
       - name: Install Dependencies
         run: go mod tidy  # Ensure dependencies are set up
 
+      - name: Install Redis CLI
+        run: sudo apt-get update && sudo apt-get install -y redis-tools
+
       - name: Wait for Redis to be Ready
         run: |
           echo "Checking Redis availability..."
