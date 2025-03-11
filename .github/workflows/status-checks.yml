@@ -29,6 +29,13 @@ jobs:
       - name: Install Dependencies
         run: go mod tidy  # Ensure dependencies are set up
 
+      - name: Wait for Redis to be ready
+        run: |
+          for i in {1..10}; do
+            (echo PING | nc localhost 6379) && exit 0 || sleep 2
+          done
+          exit 1
+
       - name: Run Tests
         if: matrix.task == 'test'
         run: go test -v $(go list ./... | grep -v "api_calls.go")
