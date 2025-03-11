@@ -1,0 +1,41 @@
+name: Status Checks  # Workflow name
+
+on:
+  pull_request:
+    branches:
+      - main
+      - develop
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        task: [test, lint]  # Runs both tests and linting in parallel
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.24'  # Ensure correct Go version
+
+      - name: Verify Go Installation
+        run: go version  # Debugging step
+
+      - name: Install Dependencies
+        run: go mod tidy  # Ensure dependencies are set up
+
+      - name: Run Tests
+        if: matrix.task == 'test'
+        run: go test -v $(go list ./... | grep -v "api_calls.go")
+        
+      - name: Install & Run Linter
+        if: matrix.task == 'lint'
+        run: |
+          go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+          echo "$HOME/go/bin" >> $GITHUB_PATH
+          golangci-lint run ./...
