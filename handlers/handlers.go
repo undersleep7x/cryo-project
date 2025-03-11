@@ -28,7 +28,6 @@ var Ping = func(w http.ResponseWriter, r *http.Request) {
 		log.Printf("JSON encoding error: %v", err)
 		return
 	}
-
 }
 
 // handle /price route call and return latest prices from coingecko 
