@@ -7,5 +7,5 @@ import (
 
 func SetupRoutes(router *mux.Router) {
     router.HandleFunc("/ping", handlers.Ping).Methods("GET") // ping route
-	router.HandleFunc("/price", handlers.FetchPrices) .Methods("GET")// route for sourcing pricing data from CoinGecko API
+	router.HandleFunc("/price", handlers.FetchPrices).Methods("GET")// route for sourcing pricing data from CoinGecko API
 }

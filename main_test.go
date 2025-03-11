@@ -7,11 +7,11 @@ import (
 )
 
 func TestStartServer(t *testing.T) {
-	server := startServer()
+	server := startServer() //starts the server for testing
 
-	// Ensure the server is not nil
+	// check the server is not nil
 	if server == nil {
-		t.Fatal("Expected server to be initialized, got nil")
+		t.Fatal("Expected server to be initialized, got nil") 
 	}
 
 	// Check if the server address is correctly set

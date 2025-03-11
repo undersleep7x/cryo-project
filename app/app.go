@@ -44,10 +44,10 @@ type ConfigStruct struct { //utilize config files to start app services
 	} `yaml:"coingecko"` //create coingecko api struct
 }
 
+// implenent wrapper for custom methods while allowing default redis functionality
 type RedisClientWrapper struct {
 	client *redis.Client
 }
-
 func (r *RedisClientWrapper) Get(ctx context.Context, key string) (string, error) {
 	return r.client.Get(ctx, key).Result()
 }
@@ -67,6 +67,7 @@ var Config ConfigStruct
 var RedisClient RedisClientInterface
 var Router *mux.Router
 
+// load configuration file for later implementation
 func loadConfig() {
 	env := os.Getenv("APP_ENV")
 	if env == ""{
@@ -88,25 +89,29 @@ func loadConfig() {
 	log.Println("Config initialized")
 }
 
+// setup redis server for caching
 func setupRedis() {
-	client := redis.NewClient(&redis.Options{
-		Addr: Config.Redis.Address,
-		Password: Config.Redis.Password,
-		DB: Config.Redis.DB,
-	})
+	RedisClient = &RedisClientWrapper{
+		client: redis.NewClient(&redis.Options{
+			Addr: Config.Redis.Address,
+			Password: Config.Redis.Password,
+			DB: Config.Redis.DB,
+		}),
+	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	_, err := client.Ping(ctx).Result()
+	err := RedisClient.Ping(ctx)
 	if err != nil {
 		log.Fatalf("Redis connection failed: %v", err)
 	} else {
 		log.Println("Redis connected successfully")
 	}
-	RedisClient = &RedisClientWrapper{client: client}
+	// RedisClient = &RedisClientWrapper{client: client}
 }
 
+// setup logging with logging file
 func setupLogging() {
 	logFile, err := os.OpenFile(Config.Logging.FilePath, os.O_CREATE|os.O_APPEND|os.O_WRONLY, os.FileMode(Config.Logging.Permissions))
 	//opens specified file for logging form config, setting it to be created/appended and read/write only with proper permissions
@@ -122,6 +127,7 @@ func setupLogging() {
 	log.Println("Logger initialized")
 }
 
+// startup application and configurations
 func InitApp() {
 	log.Println("Initializing config...")
 	loadConfig()
