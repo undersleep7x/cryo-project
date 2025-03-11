@@ -9,6 +9,11 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    services:
+      redis:
+        image: redis:latest
+        ports:
+          - 6379:6379
 
     strategy:
       matrix:
@@ -31,7 +36,7 @@ jobs:
 
       - name: Wait for Redis to be ready
         run: |
-          for i in {1..15}; do
+          for i in {1..10}; do
             (echo PING | nc localhost 6379) && exit 0 || sleep 2
           done
           echo "Redis did not start in time" && exit 1
