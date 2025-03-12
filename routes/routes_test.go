@@ -7,7 +7,7 @@ import (
 	"log"
 
 	"github.com/gorilla/mux"
-	"github.com/undersleep7x/cryptowallet-v0.1/handlers"
+	"github.com/undersleep7x/cryptowallet-v0.1/controllers"
 )
 
 //setup dummy response for calls to handler
@@ -21,9 +21,9 @@ func dummyHandler(w http.ResponseWriter, r *http.Request) {
 
 func TestPingRoute(t *testing.T) {
 	//replace original handler with dummy handler, and set defer to restore original during test cleanup
-	original := handlers.Ping
-	defer func() { handlers.Ping = original }()
-	handlers.Ping = dummyHandler
+	original := controllers.Ping
+	defer func() { controllers.Ping = original }()
+	controllers.Ping = dummyHandler
 	router := mux.NewRouter()
 	SetupRoutes(router)
 

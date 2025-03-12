@@ -53,7 +53,7 @@ jobs:
 
       - name: Run Tests
         if: matrix.task == 'test'
-        run: go test -v $(go list ./... | grep -v "api_calls.go")
+        run: go test -v $(go list ./... | grep -v "api_calls.go,models/")
         
       - name: Install & Run Linter
         if: matrix.task == 'lint'

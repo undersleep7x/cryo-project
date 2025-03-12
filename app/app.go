@@ -9,8 +9,8 @@ import (
 	"time"
 
 	"github.com/go-redis/redis/v8"
-	"github.com/gorilla/mux"
 	"gopkg.in/yaml.v3"
+	"github.com/gin-gonic/gin"
 )
 
 type ConfigStruct struct { //utilize config files to start app services
@@ -65,7 +65,7 @@ type RedisClientInterface interface {
 
 var Config ConfigStruct
 var RedisClient RedisClientInterface
-var Router *mux.Router
+var Router *gin.Engine
 
 // load configuration file for later implementation
 func loadConfig() {
@@ -136,6 +136,6 @@ func InitApp() {
 	log.Println("Loading Redis cache...")
 	setupRedis()
 	log.Println("Setting router...")
-	Router = mux.NewRouter()
+	Router = gin.Default()
 	log.Println("App initialized")
 }
