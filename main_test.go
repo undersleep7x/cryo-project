@@ -3,7 +3,7 @@ package main
 import (
 	"testing"
 
-	"github.com/undersleep7x/cryptowallet-v0.1/app"
+	"github.com/undersleep7x/cryo-project/app"
 )
 
 func TestStartServer(t *testing.T) {
@@ -11,7 +11,7 @@ func TestStartServer(t *testing.T) {
 
 	// check the server is not nil
 	if server == nil {
-		t.Fatal("Expected server to be initialized, got nil") 
+		t.Fatal("Expected server to be initialized, got nil")
 	}
 
 	// Check if the server address is correctly set
