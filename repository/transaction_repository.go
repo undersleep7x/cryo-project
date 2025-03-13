@@ -3,7 +3,7 @@ package repository
 import (
 	// "log"
 
-	"github.com/undersleep7x/cryptowallet-v0.1/models"
+	"github.com/undersleep7x/cryo-project/models"
 )
 
 func SaveTransaction(txn models.Transaction) error {

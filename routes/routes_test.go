@@ -1,16 +1,16 @@
 package routes
 
 import (
+	"log"
 	"net/http"
 	"net/http/httptest"
 	"testing"
-	"log"
 
 	"github.com/gorilla/mux"
-	"github.com/undersleep7x/cryptowallet-v0.1/controllers"
+	"github.com/undersleep7x/cryo-project/controllers"
 )
 
-//setup dummy response for calls to handler
+// setup dummy response for calls to handler
 func dummyHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	_, err := w.Write([]byte(`{"dummy": "response"}`))

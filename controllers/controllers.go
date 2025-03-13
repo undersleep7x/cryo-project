@@ -5,28 +5,31 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/undersleep7x/cryptowallet-v0.1/models"
-	"github.com/undersleep7x/cryptowallet-v0.1/services"
 	"github.com/gin-gonic/gin"
+	"github.com/undersleep7x/cryo-project/models"
+	"github.com/undersleep7x/cryo-project/services"
 )
 
-//setup interface for price fetching, setting default struct for method, and implementing the method
-//improves mocking/testing of handlers
+// setup interface for price fetching, setting default struct for method, and implementing the method
+// improves mocking/testing of handlers
 type PriceFetcher interface {
-	FetchCryptoPrice(cryptoList []string, currency string)(any, error)
+	FetchCryptoPrice(cryptoList []string, currency string) (any, error)
 }
+
 var DefaultPriceFetcher PriceFetcher = defaultPriceFetcher{}
+
 type defaultPriceFetcher struct{}
+
 func (d defaultPriceFetcher) FetchCryptoPrice(cryptoList []string, currency string) (interface{}, error) {
 	return services.FetchCryptoPrice(cryptoList, currency)
 }
 
-//handle /ping route call and return ok to confirm healthy service
+// handle /ping route call and return ok to confirm healthy service
 var Ping = func(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "PONG"})
 }
 
-// handle /price route call and return latest prices from coingecko 
+// handle /price route call and return latest prices from coingecko
 var FetchPrices = func(c *gin.Context) {
 	//store query params
 	cryptos := c.Query("crypto")
@@ -41,17 +44,17 @@ var FetchPrices = func(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Missing 'currency' query parameter"})
 		return
 	}
-	
-	cryptoList := strings.Split(cryptos, ",") // csv -> array of cryptos
+
+	cryptoList := strings.Split(cryptos, ",")                                 // csv -> array of cryptos
 	prices, err := DefaultPriceFetcher.FetchCryptoPrice(cryptoList, currency) // call service to fetch pricing
-	if err != nil { //return error if service error is thrown
+	if err != nil {                                                           //return error if service error is thrown
 		log.Printf("Internal Server Error when calling FetchCryptoPrice: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch prices"})
 		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{"prices": prices}) // return prices json
-	
+
 }
 
 func CreateInvoice(c *gin.Context) {
@@ -71,8 +74,8 @@ func CreateInvoice(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"payment_address": txn.PaymentAddr,
-		"transaction_id": txn.ID,
-		"status": txn.Status,
+		"transaction_id":  txn.ID,
+		"status":          txn.Status,
 	})
 }
 
@@ -93,8 +96,7 @@ func SendPayment(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"transaction_id": txn.ID,
-		"status": txn.Status,
-		"tx_hash": txn.TxHash,
+		"status":         txn.Status,
+		"tx_hash":        txn.TxHash,
 	})
 }
-

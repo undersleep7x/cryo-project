@@ -5,8 +5,8 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/undersleep7x/cryptowallet-v0.1/models"
-	"github.com/undersleep7x/cryptowallet-v0.1/repository"
+	"github.com/undersleep7x/cryo-project/models"
+	"github.com/undersleep7x/cryo-project/repository"
 )
 
 var GenerateOneTimeAddress = func(currency string) string {
@@ -21,14 +21,14 @@ var CreateInvoice = func(r models.InvoiceRequest) (models.Transaction, error) {
 
 	// generates invoice for new merchant payment and saves to db as new transaction
 	txn := models.Transaction{
-		ID: "txn_" + uuid.New().String(),
+		ID:            "txn_" + uuid.New().String(),
 		RecipientHash: recipientHash,
-		Amount: r.Amount,
-		Currency: r.Currency,
-		Status: "invoice",
-		PaymentAddr: GenerateOneTimeAddress(r.Currency),
-		CreatedAt: time.Now(),
-		UpdatedAt: time.Now(),
+		Amount:        r.Amount,
+		Currency:      r.Currency,
+		Status:        "invoice",
+		PaymentAddr:   GenerateOneTimeAddress(r.Currency),
+		CreatedAt:     time.Now(),
+		UpdatedAt:     time.Now(),
 	}
 
 	err := repository.SaveTransaction(txn)

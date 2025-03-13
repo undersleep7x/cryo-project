@@ -1,7 +1,7 @@
 package routes
 
 import (
-	"github.com/undersleep7x/cryptowallet-v0.1/controllers"
+	"github.com/undersleep7x/cryo-project/controllers"
 	"github.com/gin-gonic/gin"
 )
 

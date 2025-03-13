@@ -1,4 +1,4 @@
-module github.com/undersleep7x/cryptowallet-v0.1
+module github.com/undersleep7x/cryo-project
 
 go 1.24
 
