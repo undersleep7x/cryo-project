@@ -10,18 +10,14 @@ import (
 	"github.com/undersleep7x/cryo-project/services"
 )
 
-// setup interface for price fetching, setting default struct for method, and implementing the method
+// setup interface for price fetching
 // improves mocking/testing of handlers
-type PriceFetcher interface {
-	FetchCryptoPrice(cryptoList []string, currency string) (any, error)
+type PriceFetcher struct {
+	service services.FetchCryptoPriceService
 }
 
-var DefaultPriceFetcher PriceFetcher = defaultPriceFetcher{}
-
-type defaultPriceFetcher struct{}
-
-func (d defaultPriceFetcher) FetchCryptoPrice(cryptoList []string, currency string) (interface{}, error) {
-	return services.FetchCryptoPrice(cryptoList, currency)
+func NewPriceFetcher (service services.FetchCryptoPriceService) *PriceFetcher {
+	return &PriceFetcher{service: service}
 }
 
 // handle /ping route call and return ok to confirm healthy service
@@ -30,7 +26,7 @@ var Ping = func(c *gin.Context) {
 }
 
 // handle /price route call and return latest prices from coingecko
-var FetchPrices = func(c *gin.Context) {
+func (f *PriceFetcher) FetchPrices (c *gin.Context) {
 	//store query params
 	cryptos := c.Query("crypto")
 	currency := c.Query("currency")
@@ -46,7 +42,7 @@ var FetchPrices = func(c *gin.Context) {
 	}
 
 	cryptoList := strings.Split(cryptos, ",")                                 // csv -> array of cryptos
-	prices, err := DefaultPriceFetcher.FetchCryptoPrice(cryptoList, currency) // call service to fetch pricing
+	prices, err := f.service.FetchCryptoPrice(cryptoList, currency) // call service to fetch pricing
 	if err != nil {                                                           //return error if service error is thrown
 		log.Printf("Internal Server Error when calling FetchCryptoPrice: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch prices"})

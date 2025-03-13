@@ -43,6 +43,7 @@ func TestFetchCryptoPrice(t *testing.T) {
 	// set starter variables for test cases
 	cryptoSymbols := []string{"bitcoin"}
 	currency := "usd"
+	service := NewFetchCryptoPriceService()
 
 	// test response if value is found in cache
 	t.Run("Cache Hit", func(t *testing.T) {
@@ -53,7 +54,7 @@ func TestFetchCryptoPrice(t *testing.T) {
 		mockRedis.On("Get", mock.Anything, "prices:bitcoin:usd").Return(cachedData, nil)
 
 		// make method call and record response, should have no error and match test data
-		prices, err := FetchCryptoPrice(cryptoSymbols, currency)
+		prices, err := service.FetchCryptoPrice(cryptoSymbols, currency)
 		assert.NoError(t, err)
 		assert.Equal(t, 45000.00, prices["bitcoin"])
 	})
@@ -84,7 +85,7 @@ func TestFetchCryptoPrice(t *testing.T) {
 		mockRedis.On("Set", mock.Anything, "prices:bitcoin:usd", mock.Anything, 30*time.Second).Return(nil).Maybe()
 
 		// make method call, should return fallback price for crypto
-		prices, err := FetchCryptoPrice(cryptoSymbols, currency)
+		prices, err := service.FetchCryptoPrice(cryptoSymbols, currency)
 		assert.NoError(t, err)
 		assert.Equal(t, -1.00, prices["bitcoin"])
 	})
@@ -112,7 +113,7 @@ func TestFetchCryptoPrice(t *testing.T) {
 		mockRedis.On("Set", mock.Anything, "prices:bitcoin:usd", mock.Anything, 30*time.Second).Return(nil)
 
 		// make method call, should return expected price for crypto
-		prices, err := FetchCryptoPrice(cryptoSymbols, currency)
+		prices, err := service.FetchCryptoPrice(cryptoSymbols, currency)
 		assert.NoError(t, err)
 		assert.Equal(t, 47000.00, prices["bitcoin"])
 	})
@@ -138,7 +139,7 @@ func TestFetchCryptoPrice(t *testing.T) {
 		mockRedis.On("Set", mock.Anything, "prices:bitcoin:usd", mock.Anything, 30*time.Second).Return(nil)
 
 		// make method call, should fail to find in redis and return from api call
-		prices, err := FetchCryptoPrice(cryptoSymbols, currency)
+		prices, err := service.FetchCryptoPrice(cryptoSymbols, currency)
 		assert.NoError(t, err)
 		assert.Equal(t, 46000.00, prices["bitcoin"])
 	})

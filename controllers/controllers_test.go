@@ -6,132 +6,98 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/gin-gonic/gin"
+	"github.com/stretchr/testify/assert"
+	"github.com/undersleep7x/cryo-project/services"
 )
 
 //mocking pricefetcher and implementing fetchCryptoPrice due to interface flexibility
 type mockPriceFetcher struct {
-	result any
-	err error
+	services.FetchCryptoPriceService
 }
-func (m mockPriceFetcher) FetchCryptoPrice(cryptoList []string, currency string) (interface{}, error) {
-	return m.result, m.err
+
+func (m *mockPriceFetcher) FetchCryptoPrice(cryptoList []string, currency string) (map[string]float64, error) {
+	if currency == "se" {
+		return nil, errors.New("No currency provided")
+	}
+	return map[string]float64{"bitcoin": 45000.000, "ethereum": 3200.75}, nil
 }
 
 func TestPing(t *testing.T) {
-	// send http request to handler for ping to simulate call
-	req, err := http.NewRequest("GET", "/ping", nil)
-	if err != nil {
-		t.Fatal(err)
-	}
-	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(Ping)
-	handler.ServeHTTP(rr, req)
+	router := gin.Default()
+	router.GET("/", Ping)
 
-	// verify that status is 200
-	if status := rr.Code; status != http.StatusOK {
-		t.Errorf("Ping handler returned wrong status: %v", status)
-	}
+	req, _ := http.NewRequest("GET", "/", nil)
+	w := httptest.NewRecorder()
+	router.ServeHTTP(w, req)
 
-	// verify that response is present and a status of ok
-	var response map[string]string
-	if err := json.Unmarshal(rr.Body.Bytes(), &response); err != nil {
-		t.Fatal("Failed to parse response", err)
-	}
-	if response["status"] != "ok" {
-		t.Errorf("Expected status 'ok', got %v", response["status"])
-	}
+	assert.Equal(t, http.StatusOK, w.Code)
+
+	var response map[string]any;
+	json.Unmarshal(w.Body.Bytes(), &response)
+
+	assert.NotNil(t, response["message"])
+	assert.Equal(t, "PONG", response["message"])
+
 }
 
-func TestFetchPrices_MissingCrypto(t *testing.T) {
-	// test request with missing crypto type and record the response
-	req, err := http.NewRequest("GET", "/price?currency=USD", nil)
-	if err != nil {
-		t.Fatal(err)
-	}
-	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(FetchPrices)
-	handler.ServeHTTP(rr, req)
+func TestFetchPrices(t *testing.T) {
+	router := gin.Default()
+	mockService := &mockPriceFetcher{}
+	priceFetcher := NewPriceFetcher(mockService)
+	router.GET("/price", priceFetcher.FetchPrices)
 
-	// response should just be a bad request
-	if rr.Code != http.StatusBadRequest {
-		t.Errorf("Did not receive missing crypto 400 status: %v", rr.Code)
-	}
-}
+	t.Run("Missing crypto", func(t *testing.T) {
+		req, _ := http.NewRequest("GET", "/price?currency=usd", nil)
+		w := httptest.NewRecorder()
+		router.ServeHTTP(w, req)
 
-func TestFetchPrices_MissingCurrency(t *testing.T) {
-	// test request with missing currency and record the response
-	req, err := http.NewRequest("GET", "/price?crypto=BTC", nil)
-	if err != nil {
-		t.Fatal(err)
-	}
-	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(FetchPrices)
-	handler.ServeHTTP(rr, req)
+		var response map[string]any;
+		json.Unmarshal(w.Body.Bytes(), &response)
 
-	// response should just be a bad request
-	if rr.Code != http.StatusBadRequest {
-		t.Errorf("Did not receive missing currency 400 status: %v", rr.Code)
-	}
-}
+		assert.Equal(t, http.StatusBadRequest, w.Code)
+		assert.Equal(t, "Missing 'crypto' query parameter", response["error"])
+	})
 
-func TestFetchPrices_Success(t *testing.T) {
-	// swap the original pricefetcher to the mock fetcher and set it to return moc data
-	// undo the swap at the end
-	originalFetcher := DefaultPriceFetcher
-	defer func() { DefaultPriceFetcher = originalFetcher }()
-	DefaultPriceFetcher = mockPriceFetcher {
-		result: map[string]float64{"bitcoin": 45000.00, "ethereum": 3000.00},
-		err: nil,
-	}
+	t.Run("Missing Currency", func(t *testing.T) {
+		req, _ := http.NewRequest("GET", "/price?crypto=bitcoin,ethereum", nil)
+		w := httptest.NewRecorder()
+		router.ServeHTTP(w, req)
 
-	// send request with expected crypto and currency, and record response
-	req, err := http.NewRequest("GET", "/price?crypto=bitcoin,ethereum&currency=usd", nil)
-	if err != nil {
-		t.Fatal(err)
-	}
-	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(FetchPrices)
-	handler.ServeHTTP(rr, req)
+		var response map[string]any;
+		json.Unmarshal(w.Body.Bytes(), &response)
 
-	// status should be 200
-	if rr.Code != http.StatusOK {
-		t.Errorf("Did not receive 200 OK: %v", rr.Code)
-	}
+		assert.Equal(t, http.StatusBadRequest, w.Code)
+		assert.Equal(t, "Missing 'currency' query parameter", response["error"])
+	})
 
-	// result should have expected cryptos and prices
-	var result map[string]float64
-	if err := json.Unmarshal(rr.Body.Bytes(), &result); err != nil {
-		t.Fatalf("Failed to decode response: %v", err)
-	}
-	if result["bitcoin"] != 45000.00 {
-		t.Errorf("Did not receive expected bitcoin price: %v", result["bitcoin"])
-	}
-	if result["ethereum"] != 3000.00 {
-		t.Errorf("Did not receive expected ethereum price: %v", result["ethereum"])
-	}
-}
+	t.Run("Success", func(t *testing.T) {
+		req, _ := http.NewRequest("GET", "/price?crypto=bitcoin,ethereum&currency=usd", nil)
+		w := httptest.NewRecorder()
+		router.ServeHTTP(w, req)
+	
+		assert.Equal(t, http.StatusOK, w.Code)
+	
+		var response map[string]any;
+		json.Unmarshal(w.Body.Bytes(), &response)
+	
+		assert.NotNil(t, response["prices"])
+		assert.Equal(t, 45000.00, response["prices"].(map[string]any)["bitcoin"])
+		assert.Equal(t, 3200.75, response["prices"].(map[string]any)["ethereum"])
+	})
 
-func TestFetchPrices_ServiceError(t *testing.T) {
-	// swap the original pricefetcher to the mock fetcher and set it to return moc data
-	// undo the swap at the end
-	originalFetcher := DefaultPriceFetcher
-	defer func() { DefaultPriceFetcher = originalFetcher }()
-	DefaultPriceFetcher = mockPriceFetcher {
-		result: nil,
-		err: errors.New("dummy error"),
-	}
-
-	// send request with expected crypto and currency, and record response
-	req, err := http.NewRequest("GET", "/price?crypto=bitcoin,ethereum&currency=usd", nil)
-	if err != nil {
-		t.Fatal(err)
-	}
-	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(FetchPrices)
-	handler.ServeHTTP(rr, req)
-
-	// response should just be 500 server error
-	if rr.Code != http.StatusInternalServerError {
-		t.Errorf("Did not receive expected 500 status: %v", rr.Code)
-	}
+	t.Run("ServiceError", func(t *testing.T) {
+		req, _ := http.NewRequest("GET", "/price?crypto=bitcoin,ethereum&currency=se", nil)
+		w := httptest.NewRecorder()
+		router.ServeHTTP(w, req)
+	
+		assert.Equal(t, http.StatusInternalServerError, w.Code)
+	
+		var response map[string]any;
+		json.Unmarshal(w.Body.Bytes(), &response)
+	
+		assert.Equal(t, http.StatusInternalServerError, w.Code)
+		assert.Equal(t, "Failed to fetch prices", response["error"])
+	})
 }

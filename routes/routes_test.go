@@ -1,64 +1,38 @@
 package routes
 
 import (
-	"log"
+	"bytes"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
-	"github.com/gorilla/mux"
-	"github.com/undersleep7x/cryo-project/controllers"
+	"github.com/gin-gonic/gin"
+	"github.com/stretchr/testify/assert"
 )
 
-// setup dummy response for calls to handler
-func dummyHandler(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusOK)
-	_, err := w.Write([]byte(`{"dummy": "response"}`))
-	if err != nil {
-		log.Printf("Failed to write response: %v", err)
-	}
+func SetupTestRouter() *gin.Engine {
+	router := gin.Default()
+	SetupRoutes(router)
+	return router
+}
+
+func PerformRequest(router *gin.Engine, method, path string, body []byte) *httptest.ResponseRecorder{
+	req := httptest.NewRequest(method, path, bytes.NewBuffer(body))
+	req.Header.Set("Content-Type", "application/json")
+
+	w := httptest.NewRecorder()
+	router.ServeHTTP(w, req)
+	return w
 }
 
 func TestPingRoute(t *testing.T) {
-	//replace original handler with dummy handler, and set defer to restore original during test cleanup
-	original := controllers.Ping
-	defer func() { controllers.Ping = original }()
-	controllers.Ping = dummyHandler
-	router := mux.NewRouter()
-	SetupRoutes(router)
-
-	//send request to ping endpoint and ensure response is received
-	req, err := http.NewRequest("GET", "/ping", nil)
-	if err != nil {
-		t.Fatal(err)
-	}
-	rr := httptest.NewRecorder()
-	router.ServeHTTP(rr, req)
-
-	//ping should return ok
-	if rr.Code != http.StatusOK {
-		t.Errorf("Ping returned wrong status: %v", rr.Code)
-	}
+	router := SetupTestRouter()
+	w := PerformRequest(router, "GET", "/", nil)
+	assert.NotEqual(t, http.StatusNotFound, w.Code)
 }
 
 func TestPriceRoute(t *testing.T) {
-	//replace original handler with dummy handler, and set defer to restore original during test cleanup
-	original := handlers.FetchPrices
-	defer func() { handlers.FetchPrices = original }()
-	handlers.FetchPrices = dummyHandler
-	router := mux.NewRouter()
-	SetupRoutes(router)
-
-	//send request to price endpoint and ensure response is received
-	req, err := http.NewRequest("GET", "/price", nil)
-	if err != nil {
-		t.Fatal(err)
-	}
-	rr := httptest.NewRecorder()
-	router.ServeHTTP(rr, req)
-
-	//dummy handler should return ok as long as router works properly
-	if rr.Code != http.StatusOK {
-		t.Errorf("Price returned wrong status: %v", rr.Code)
-	}
+	router := SetupTestRouter()
+	w := PerformRequest(router, "GET", "/price", nil)
+	assert.NotEqual(t, http.StatusNotFound, w.Code)
 }

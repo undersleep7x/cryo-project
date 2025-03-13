@@ -11,7 +11,17 @@ import (
 	"github.com/undersleep7x/cryo-project/app"
 )
 
-var FetchCryptoPrice = func(cryptoSymbols []string, currency string) (map[string]float64, error) {
+type FetchCryptoPriceService interface {
+	FetchCryptoPrice(cryptoSymbols []string, currency string) (map[string]float64, error)
+}
+
+type fetchCryptoPriceServiceImpl struct{}
+
+func NewFetchCryptoPriceService() FetchCryptoPriceService {
+	return &fetchCryptoPriceServiceImpl{}
+}
+
+func(s *fetchCryptoPriceServiceImpl) FetchCryptoPrice(cryptoSymbols []string, currency string) (map[string]float64, error) {
 	// kick off redis context and close at the end
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
