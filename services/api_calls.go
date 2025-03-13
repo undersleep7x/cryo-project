@@ -1,19 +1,20 @@
 package services
 
 import (
-	"log"
 	"fmt"
-	"time"
+	"log"
 	"strings"
+	"time"
 
-	"github.com/undersleep7x/cryptowallet-v0.1/app"
 	"github.com/go-resty/resty/v2"
+	"github.com/undersleep7x/cryo-project/app"
 )
+
 // fetch prices from coingecko api
-var FetchPrices = func(cryptos []string, currency string) (*resty.Response, error){
+var FetchPrices = func(cryptos []string, currency string) (*resty.Response, error) {
 	// setup resty client for api call
 	client := resty.New()
-	timeout := time.Duration(app.Config.CoinGecko.Timeout)*time.Second
+	timeout := time.Duration(app.Config.CoinGecko.Timeout) * time.Second
 	client.SetTimeout(timeout)
 
 	// turn passed in array into csv string

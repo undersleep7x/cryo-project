@@ -1,13 +1,13 @@
 package main
 
 //start backend service
-import(
+import (
 	"fmt"
 	"log"
 	"net/http"
 
-	"github.com/undersleep7x/cryptowallet-v0.1/routes"
-	"github.com/undersleep7x/cryptowallet-v0.1/app"
+	"github.com/undersleep7x/cryo-project/app"
+	"github.com/undersleep7x/cryo-project/routes"
 )
 
 func startServer() *http.Server {
@@ -17,14 +17,13 @@ func startServer() *http.Server {
 
 	port := app.Config.App.Port
 	server := &http.Server{
-		Addr: fmt.Sprintf(":%s", port),
+		Addr:    fmt.Sprintf(":%s", port),
 		Handler: app.Router,
 	}
 	log.Printf("Server is now running on port %s", port)
 	return server
 
 }
-
 
 func main() {
 	server := startServer()
