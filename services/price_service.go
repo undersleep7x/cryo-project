@@ -8,17 +8,16 @@ import (
 	"time"
 
 	"github.com/tidwall/gjson"
-	"github.com/undersleep7x/cryptowallet-v0.1/app"
+	"github.com/undersleep7x/cryo-project/app"
 )
-
 
 var FetchCryptoPrice = func(cryptoSymbols []string, currency string) (map[string]float64, error) {
 	// kick off redis context and close at the end
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	priceData := make(map[string]float64) // init return variable 
-	var missingCryptos []string // init missingcrypto variable
+	priceData := make(map[string]float64) // init return variable
+	var missingCryptos []string           // init missingcrypto variable
 
 	// loop through array and check cache for any saved data
 	for _, crypto := range cryptoSymbols {

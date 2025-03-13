@@ -1,5 +1,5 @@
 app:
-  name: "CryptoWallet"
+  name: "cryo-application"
   environment: "development"
   log_level: "debug"
   port: "8080"
