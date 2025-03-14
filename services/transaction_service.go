@@ -9,33 +9,62 @@ import (
 	"github.com/undersleep7x/cryo-project/repository"
 )
 
+type TransactionService interface {
+	CreateInvoice(models.InvoiceRequest) (*models.InvoiceResponse, error)
+	SendPayment(models.PayoutRequest)
+}
+
+type transactionsServiceImpl struct{}
+
+func NewTransactionsService() TransactionService {
+	return &transactionsServiceImpl{}
+}
+
+func (s *transactionsServiceImpl) CreateInvoice(r models.InvoiceRequest) (*models.InvoiceResponse, error) {
+	recipientHash := r.RecipientId + "RECIPHASH" //TODO implement hashing functionality here
+	resp := models.InvoiceResponse{}
+
+	inv := models.Invoice {
+		ID: "txn_" + uuid.NewString(),
+		SenderType: r.SenderType,
+		RecipientHash: recipientHash,
+		PaymentAddr: GenerateOneTimeAddress(r.Currency),
+		Amount: r.Amount,
+		Currency: r.Currency,
+		Status: "invoice",
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
+		ExternalRef: r.ExternalRef,
+	}
+
+	err := repository.SaveTransaction(inv)
+	if err != nil {
+		log.Printf("Error saving new invoice to database: %v", err)
+		return nil, err
+	}
+
+	//TODO after creation and save to db, there must be logic that allows for tracking of the invoice
+	//such as identifying when payment has been made, following blockchain for confirmation, etc
+	//just return invoice for now
+	resp.PaymentAddr = inv.PaymentAddr
+	resp.ExternalRef = inv.ExternalRef
+	resp.TransactionId = inv.ID
+	resp.Status = inv.Status
+	return &resp, nil
+}
+
+func (s *transactionsServiceImpl) SendPayment(r models.PayoutRequest) {
+
+}
+
 var GenerateOneTimeAddress = func(currency string) string {
 	var genOta = "STUBOTA12345678"
 	log.Printf("One time address successfully generated")
 	return genOta
 }
 
-var CreateInvoice = func(r models.InvoiceRequest) (models.Transaction, error) {
-
-	recipientHash := "RECIPHASH"
-
-	// generates invoice for new merchant payment and saves to db as new transaction
-	txn := models.Transaction{
-		ID:            "txn_" + uuid.New().String(),
-		RecipientHash: recipientHash,
-		Amount:        r.Amount,
-		Currency:      r.Currency,
-		Status:        "invoice",
-		PaymentAddr:   GenerateOneTimeAddress(r.Currency),
-		CreatedAt:     time.Now(),
-		UpdatedAt:     time.Now(),
-	}
-
-	err := repository.SaveTransaction(txn)
-	return txn, err
-}
 
 var SendPayment = func(r models.PayoutRequest) (models.Transaction, error) {
-	txn := models.Transaction{}
+	txn := models.Invoice{}
 	return txn, nil
 }

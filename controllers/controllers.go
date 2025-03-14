@@ -11,13 +11,19 @@ import (
 )
 
 // setup interface for price fetching
-// improves mocking/testing of handlers
 type PriceFetcher struct {
 	service services.FetchCryptoPriceService
 }
-
 func NewPriceFetcher (service services.FetchCryptoPriceService) *PriceFetcher {
 	return &PriceFetcher{service: service}
+}
+
+// setup interface for transactions
+type Transactions struct {
+	service services.TransactionService
+}
+func NewTransactionsService (service services.TransactionService) *Transactions {
+	return &Transactions{service: service}
 }
 
 // handle /ping route call and return ok to confirm healthy service
@@ -41,9 +47,9 @@ func (f *PriceFetcher) FetchPrices (c *gin.Context) {
 		return
 	}
 
-	cryptoList := strings.Split(cryptos, ",")                                 // csv -> array of cryptos
+	cryptoList := strings.Split(cryptos, ",") // csv -> array of cryptos
 	prices, err := f.service.FetchCryptoPrice(cryptoList, currency) // call service to fetch pricing
-	if err != nil {                                                           //return error if service error is thrown
+	if err != nil {   //return error if service error is thrown
 		log.Printf("Internal Server Error when calling FetchCryptoPrice: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch prices"})
 		return
@@ -53,46 +59,42 @@ func (f *PriceFetcher) FetchPrices (c *gin.Context) {
 
 }
 
-func CreateInvoice(c *gin.Context) {
-	var request models.InvoiceRequest
+func (f *Transactions) CreateInvoice(c *gin.Context) {
+	var request models.InvoiceRequest // create request object for json
 
-	if err := c.ShouldBindJSON(&request); err != nil { // validation check for json request
+	if err := c.ShouldBindJSON(&request); err != nil { // validation check for json request after parsing to object
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request format"})
 		return
 	}
 
-	txn, err := services.CreateInvoice(request)
+	inv, err := f.service.CreateInvoice(request) // call service for invoices
 	if err != nil { //catch for service failure
 		log.Printf("Internal Server Error when calling CreateInvoice: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create transaction"})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"payment_address": txn.PaymentAddr,
-		"transaction_id":  txn.ID,
-		"status":          txn.Status,
-	})
+	c.JSON(http.StatusOK, inv)
 }
 
-func SendPayment(c *gin.Context) {
-	var request models.PayoutRequest
+func (f *Transactions) SendPayment(c *gin.Context) {
+	// var request models.PayoutRequest // create request object for json
 
-	if err := c.ShouldBindJSON(&request); err != nil { // validation check for json request
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request format"})
-		return
-	}
+	// if err := c.ShouldBindJSON(&request); err != nil { // validation check for json request after parsing to object
+	// 	c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request format"})
+	// 	return
+	// }
 
-	txn, err := services.SendPayment(request)
-	if err != nil { //catch for service failure
-		log.Printf("Internal Server Error when calling sendPayment: %v", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to send payment"})
-		return
-	}
+	// txn, err := f.service.SendPayment(request) //call service for sending payments
+	// if err != nil { //catch for service failure
+	// 	log.Printf("Internal Server Error when calling sendPayment: %v", err)
+	// 	c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to send payment"})
+	// 	return
+	// }
 
-	c.JSON(http.StatusOK, gin.H{
-		"transaction_id": txn.ID,
-		"status":         txn.Status,
-		"tx_hash":        txn.TxHash,
-	})
+	// c.JSON(http.StatusOK, gin.H{ // return response
+	// 	"transaction_id": txn.ID,
+	// 	"status":         txn.Status,
+	// 	"tx_hash":        txn.TxHash,
+	// })
 }

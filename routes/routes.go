@@ -7,10 +7,15 @@ import (
 )
 
 func SetupRoutes(router *gin.Engine) {
+	//price interface interactions
 	priceService := services.NewFetchCryptoPriceService()
 	priceFetcher := controllers.NewPriceFetcher(priceService)
+	//transactions interface interactions
+	transactionService := services.NewTransactionsService()
+	transactions := controllers.NewTransactionsService(transactionService)
 
     router.GET("/", controllers.Ping) // ping route
 	router.GET("/price", priceFetcher.FetchPrices)// route for sourcing pricing data from CoinGecko API
-	router.POST("/transaction", controllers.CreateInvoice) // create a new transaction (p2p payment, invoice, refund, etc)
+	router.POST("/invoice", transactions.CreateInvoice) // create a new transaction (p2p payment, invoice, refund, etc)
+	router.POST("/send-payment", transactions.SendPayment)
 }

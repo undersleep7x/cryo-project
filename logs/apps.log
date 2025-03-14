@@ -246,3 +246,116 @@
 2025/03/13 16:29:06 app.go:138: Setting router...
 2025/03/13 16:29:06 app.go:140: App initialized
 2025/03/13 16:29:06 main.go:23: Server is now running on port 8080
+2025/03/13 17:56:29 app.go:127: Logger initialized
+2025/03/13 17:56:29 app.go:136: Loading Redis cache...
+2025/03/13 17:56:29 app.go:109: Redis connected successfully
+2025/03/13 17:56:29 app.go:138: Setting router...
+2025/03/13 17:56:29 app.go:140: App initialized
+2025/03/13 17:56:29 main.go:23: Server is now running on port 8080
+2025/03/13 17:56:40 price_service.go:47: No cache for bitcoin in Redis cache, fetching with API
+2025/03/13 17:56:40 price_service.go:47: No cache for ethereum in Redis cache, fetching with API
+2025/03/13 17:56:40 api_calls.go:23: Making API call to https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_currencies=usd
+2025/03/13 17:57:10 price_service.go:43: Successfully retrieved cached price data for bitcoin
+2025/03/13 17:57:10 price_service.go:43: Successfully retrieved cached price data for ethereum
+2025/03/13 22:13:30 app.go:127: Logger initialized
+2025/03/13 22:13:30 app.go:136: Loading Redis cache...
+2025/03/13 22:13:30 app.go:109: Redis connected successfully
+2025/03/13 22:13:30 app.go:138: Setting router...
+2025/03/13 22:13:30 app.go:140: App initialized
+2025/03/13 22:13:30 main.go:23: Server is now running on port 8080
+2025/03/13 22:16:13 transaction_service.go:58: One time address successfully generated
+2025/03/13 22:19:03 app.go:127: Logger initialized
+2025/03/13 22:19:03 app.go:136: Loading Redis cache...
+2025/03/13 22:19:03 app.go:109: Redis connected successfully
+2025/03/13 22:19:03 app.go:138: Setting router...
+2025/03/13 22:19:03 app.go:140: App initialized
+2025/03/13 22:19:03 main.go:23: Server is now running on port 8080
+2025/03/13 22:19:06 transaction_service.go:58: One time address successfully generated
+2025/03/13 22:21:02 app.go:127: Logger initialized
+2025/03/13 22:21:02 app.go:136: Loading Redis cache...
+2025/03/13 22:21:02 app.go:109: Redis connected successfully
+2025/03/13 22:21:02 app.go:138: Setting router...
+2025/03/13 22:21:02 app.go:140: App initialized
+2025/03/13 22:21:02 main.go:23: Server is now running on port 8080
+2025/03/13 22:21:04 transaction_service.go:58: One time address successfully generated
+2025/03/13 22:26:40 app.go:127: Logger initialized
+2025/03/13 22:26:40 app.go:136: Loading Redis cache...
+2025/03/13 22:26:40 app.go:109: Redis connected successfully
+2025/03/13 22:26:40 app.go:138: Setting router...
+2025/03/13 22:26:40 app.go:140: App initialized
+2025/03/13 22:26:40 main.go:23: Server is now running on port 8080
+2025/03/13 22:26:43 transaction_service.go:64: One time address successfully generated
+2025/03/13 22:38:59 app.go:127: Logger initialized
+2025/03/13 22:38:59 app.go:136: Loading Redis cache...
+2025/03/13 22:38:59 app.go:109: Redis connected successfully
+2025/03/13 22:38:59 app.go:138: Setting router...
+2025/03/13 22:38:59 app.go:140: App initialized
+2025/03/13 22:38:59 main.go:23: Server is now running on port 8080
+2025/03/13 22:39:01 transaction_service.go:64: One time address successfully generated
+2025/03/13 22:39:36 app.go:127: Logger initialized
+2025/03/13 22:39:36 app.go:136: Loading Redis cache...
+2025/03/13 22:39:36 app.go:109: Redis connected successfully
+2025/03/13 22:39:36 app.go:138: Setting router...
+2025/03/13 22:39:36 app.go:140: App initialized
+2025/03/13 22:39:36 main.go:23: Server is now running on port 8080
+2025/03/13 22:39:37 transaction_service.go:64: One time address successfully generated
+2025/03/13 22:39:55 app.go:127: Logger initialized
+2025/03/13 22:39:55 app.go:136: Loading Redis cache...
+2025/03/13 22:39:55 app.go:109: Redis connected successfully
+2025/03/13 22:39:55 app.go:138: Setting router...
+2025/03/13 22:39:55 app.go:140: App initialized
+2025/03/13 22:39:55 main.go:23: Server is now running on port 8080
+2025/03/13 22:39:58 controllers.go:70: 
+2025/03/13 22:39:58 transaction_service.go:64: One time address successfully generated
+2025/03/13 22:40:25 app.go:127: Logger initialized
+2025/03/13 22:40:25 app.go:136: Loading Redis cache...
+2025/03/13 22:40:25 app.go:109: Redis connected successfully
+2025/03/13 22:40:25 app.go:138: Setting router...
+2025/03/13 22:40:25 app.go:140: App initialized
+2025/03/13 22:40:25 main.go:23: Server is now running on port 8080
+2025/03/13 22:40:26 controllers.go:70: the external ref is 
+2025/03/13 22:40:26 transaction_service.go:64: One time address successfully generated
+2025/03/13 22:42:02 app.go:127: Logger initialized
+2025/03/13 22:42:02 app.go:136: Loading Redis cache...
+2025/03/13 22:42:02 app.go:109: Redis connected successfully
+2025/03/13 22:42:02 app.go:138: Setting router...
+2025/03/13 22:42:02 app.go:140: App initialized
+2025/03/13 22:42:02 main.go:23: Server is now running on port 8080
+2025/03/13 22:42:03 controllers.go:70: string
+2025/03/13 22:42:03 transaction_service.go:64: One time address successfully generated
+2025/03/13 22:44:12 app.go:127: Logger initialized
+2025/03/13 22:44:12 app.go:136: Loading Redis cache...
+2025/03/13 22:44:12 app.go:109: Redis connected successfully
+2025/03/13 22:44:12 app.go:138: Setting router...
+2025/03/13 22:44:12 app.go:140: App initialized
+2025/03/13 22:44:12 main.go:23: Server is now running on port 8080
+2025/03/13 22:44:51 app.go:127: Logger initialized
+2025/03/13 22:44:51 app.go:136: Loading Redis cache...
+2025/03/13 22:44:51 app.go:109: Redis connected successfully
+2025/03/13 22:44:51 app.go:138: Setting router...
+2025/03/13 22:44:51 app.go:140: App initialized
+2025/03/13 22:44:51 main.go:23: Server is now running on port 8080
+2025/03/13 22:44:52 transaction_service.go:58: One time address successfully generated
+2025/03/13 22:48:07 app.go:127: Logger initialized
+2025/03/13 22:48:07 app.go:136: Loading Redis cache...
+2025/03/13 22:48:07 app.go:109: Redis connected successfully
+2025/03/13 22:48:07 app.go:138: Setting router...
+2025/03/13 22:48:07 app.go:140: App initialized
+2025/03/13 22:48:07 main.go:23: Server is now running on port 8080
+2025/03/13 22:48:09 transaction_service.go:58: One time address successfully generated
+2025/03/13 22:48:53 app.go:127: Logger initialized
+2025/03/13 22:48:53 app.go:136: Loading Redis cache...
+2025/03/13 22:48:53 app.go:109: Redis connected successfully
+2025/03/13 22:48:53 app.go:138: Setting router...
+2025/03/13 22:48:53 app.go:140: App initialized
+2025/03/13 22:48:53 main.go:23: Server is now running on port 8080
+2025/03/13 22:48:55 transaction_service.go:58: One time address successfully generated
+2025/03/13 22:56:31 app.go:127: Logger initialized
+2025/03/13 22:56:31 app.go:136: Loading Redis cache...
+2025/03/13 22:56:31 app.go:109: Redis connected successfully
+2025/03/13 22:56:31 app.go:138: Setting router...
+2025/03/13 22:56:31 app.go:140: App initialized
+2025/03/13 22:56:31 main.go:23: Server is now running on port 8080
+2025/03/13 22:56:32 transaction_service.go:62: One time address successfully generated
+2025/03/13 22:56:51 transaction_service.go:62: One time address successfully generated
+2025/03/13 22:57:03 transaction_service.go:62: One time address successfully generated
