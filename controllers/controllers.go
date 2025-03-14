@@ -59,10 +59,11 @@ func (f *PriceFetcher) FetchPrices (c *gin.Context) {
 
 }
 
+//handle /invoice call
 func (f *Transactions) CreateInvoice(c *gin.Context) {
 	var request models.InvoiceRequest // create request object for json
 
-	if err := c.ShouldBindJSON(&request); err != nil { // validation check for json request after parsing to object
+	if err := c.ShouldBindJSON(&request); err != nil { // validation check for json request after parsing to request
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request format"})
 		return
 	}

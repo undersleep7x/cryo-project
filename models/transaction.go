@@ -4,11 +4,11 @@ import (
 	"time"
 )
 
+// transaction interface for invoice and payment structsx
 type Transaction interface {
 	GetID() string;
 	GetSenderType() string
-	GetRecipientHash() string
-	GetPaymentAddr() string
+	GetRecipientRef() string
 	GetTxnHash() string
 	GetAmount() float64;
 	GetCurrency() string;
@@ -16,8 +16,6 @@ type Transaction interface {
 	Created() time.Time
 	Updated() time.Time
 }
-
-//txn struct for both payments out and invoices coming in
 
 
 type Payout struct{
