@@ -9,7 +9,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
-	"github.com/undersleep7x/cryo-project/services"
+	"github.com/undersleep7x/cryo-project/internal/services"
 )
 
 //mocking pricefetcher and implementing fetchCryptoPrice due to interface flexibility

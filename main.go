@@ -7,7 +7,7 @@ import (
 	"net/http"
 
 	"github.com/undersleep7x/cryo-project/app"
-	"github.com/undersleep7x/cryo-project/routes"
+	"github.com/undersleep7x/cryo-project/api/routes"
 )
 
 func startServer() *http.Server {

@@ -2,8 +2,8 @@ package routes
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/undersleep7x/cryo-project/controllers"
-	"github.com/undersleep7x/cryo-project/services"
+	"github.com/undersleep7x/cryo-project/internal/controllers"
+	"github.com/undersleep7x/cryo-project/internal/services"
 )
 
 func SetupRoutes(router *gin.Engine) {

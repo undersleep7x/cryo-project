@@ -359,3 +359,30 @@
 2025/03/13 22:56:32 transaction_service.go:62: One time address successfully generated
 2025/03/13 22:56:51 transaction_service.go:62: One time address successfully generated
 2025/03/13 22:57:03 transaction_service.go:62: One time address successfully generated
+2025/03/20 02:01:32 app.go:127: Logger initialized
+2025/03/20 02:01:32 app.go:136: Loading Redis cache...
+2025/03/20 02:01:32 app.go:109: Redis connected successfully
+2025/03/20 02:01:32 app.go:138: Setting router...
+2025/03/20 02:01:32 app.go:140: App initialized
+2025/03/20 02:01:32 main.go:23: Server is now running on port 8080
+2025/03/20 02:05:41 app.go:127: Logger initialized
+2025/03/20 02:05:41 app.go:136: Loading Redis cache...
+2025/03/20 02:05:41 app.go:109: Redis connected successfully
+2025/03/20 02:05:41 app.go:138: Setting router...
+2025/03/20 02:05:41 app.go:140: App initialized
+2025/03/20 02:05:41 main.go:23: Server is now running on port 8080
+2025/03/20 02:06:31 transaction_service.go:119: One time address successfully generated
+2025/03/20 02:06:32 transaction_service.go:119: One time address successfully generated
+2025/03/20 02:06:34 transaction_service.go:119: One time address successfully generated
+2025/03/20 02:09:48 app.go:127: Logger initialized
+2025/03/20 02:09:48 app.go:136: Loading Redis cache...
+2025/03/20 02:09:48 app.go:109: Redis connected successfully
+2025/03/20 02:09:48 app.go:138: Setting router...
+2025/03/20 02:09:48 app.go:140: App initialized
+2025/03/20 02:09:48 main.go:23: Server is now running on port 8080
+2025/03/20 02:10:18 transaction_service.go:126: One time address successfully generated
+2025/03/20 02:10:26 price_service.go:47: No cache for bitcoin in Redis cache, fetching with API
+2025/03/20 02:10:26 price_service.go:47: No cache for ethereum in Redis cache, fetching with API
+2025/03/20 02:10:26 api_calls.go:23: Making API call to https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_currencies=usd
+2025/03/20 02:10:31 price_service.go:43: Successfully retrieved cached price data for bitcoin
+2025/03/20 02:10:31 price_service.go:43: Successfully retrieved cached price data for ethereum

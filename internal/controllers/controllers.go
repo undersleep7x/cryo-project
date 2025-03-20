@@ -6,8 +6,8 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
-	"github.com/undersleep7x/cryo-project/models"
-	"github.com/undersleep7x/cryo-project/services"
+	"github.com/undersleep7x/cryo-project/internal/models"
+	"github.com/undersleep7x/cryo-project/internal/services"
 )
 
 // setup interface for price fetching
@@ -71,7 +71,7 @@ func (f *Transactions) CreateInvoice(c *gin.Context) {
 	inv, err := f.service.CreateInvoice(request) // call service for invoices
 	if err != nil { //catch for service failure
 		log.Printf("Internal Server Error when calling CreateInvoice: %v", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create transaction"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create invoice"})
 		return
 	}
 
@@ -79,23 +79,19 @@ func (f *Transactions) CreateInvoice(c *gin.Context) {
 }
 
 func (f *Transactions) SendPayment(c *gin.Context) {
-	// var request models.PayoutRequest // create request object for json
+	var request models.PaymentRequest // create request object for json
 
-	// if err := c.ShouldBindJSON(&request); err != nil { // validation check for json request after parsing to object
-	// 	c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request format"})
-	// 	return
-	// }
+	if err := c.ShouldBindJSON(&request); err != nil { // validation check for json request after parsing to request
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request format"})
+		return
+	}
 
-	// txn, err := f.service.SendPayment(request) //call service for sending payments
-	// if err != nil { //catch for service failure
-	// 	log.Printf("Internal Server Error when calling sendPayment: %v", err)
-	// 	c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to send payment"})
-	// 	return
-	// }
+	txn, err := f.service.SendPayment(request) // call service for invoices
+	if err != nil { //catch for service failure
+		log.Printf("Internal Server Error when calling SendPayment: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to send payment"})
+		return
+	}
 
-	// c.JSON(http.StatusOK, gin.H{ // return response
-	// 	"transaction_id": txn.ID,
-	// 	"status":         txn.Status,
-	// 	"tx_hash":        txn.TxHash,
-	// })
+	c.JSON(http.StatusOK, txn)
 }
