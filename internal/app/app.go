@@ -72,7 +72,7 @@ func loadConfig() {
 	env := os.Getenv("APP_ENV")
 	if env == ""{
 		log.Println("No application environment found; loading with local env config.")
-		env = "local"
+		env = "git_testing"
 	}
 
 	configFile := fmt.Sprintf("config/%s_config.yml", env)
