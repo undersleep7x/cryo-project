@@ -35,7 +35,7 @@ coingecko:
   timeout: 5
   retry_attempts: 3
 `
-	configFilePath := "config/local_config.yml"
+	configFilePath := "config/git_testing_config.yml"
 	if err := os.WriteFile(configFilePath, []byte(dummyConfigContent), 0644); err != nil {
 		t.Fatalf("Failed to write dummy config file: %v", err)
 	}
@@ -51,8 +51,8 @@ func removeDummyConfigFile(t *testing.T) {
 
 func TestLoadConfig(t *testing.T) {
 	// setup pre-testing configurations with logs and config file
-	os.Setenv("APP_ENV", "local")
-	defer os.Unsetenv("APP_ENV")
+	// os.Setenv("APP_ENV", "local")
+	// defer os.Unsetenv("APP_ENV")
 	createDummyConfigFile(t)
 	defer removeDummyConfigFile(t)
 
