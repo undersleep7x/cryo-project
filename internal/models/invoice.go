@@ -53,7 +53,7 @@ func (i Invoice) GetWalletRef() string {
 func (i Invoice) GetTxnHash() string {
 	return i.TxnHash
 }
-func (i Invoice) SetTxnHash(txnHash string) {
+func (i *Invoice) SetTxnHash(txnHash string) {
 	i.TxnHash = txnHash
 }
 func (i Invoice) GetAmount() float64 {
@@ -65,7 +65,7 @@ func (i Invoice) GetCurrency() string {
 func (i Invoice) GetStatus() string {
 	return i.Status
 }
-func (i Invoice) SetStatus(status string) {
+func (i *Invoice) SetStatus(status string) {
 	i.Status = status
 }
 func (i Invoice) Created() time.Time {
@@ -74,7 +74,7 @@ func (i Invoice) Created() time.Time {
 func (i Invoice) Updated() time.Time {
 	return i.UpdatedAt
 }
-func (i Invoice) SetUpdate(t time.Time) {
+func (i *Invoice) SetUpdate(t time.Time) {
 	i.UpdatedAt = t
 }
 func (i Invoice) GetExternalRef() *string {

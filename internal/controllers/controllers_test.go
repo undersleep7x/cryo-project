@@ -35,7 +35,10 @@ func TestPing(t *testing.T) {
 	assert.Equal(t, http.StatusOK, w.Code)
 
 	var response map[string]any;
-	json.Unmarshal(w.Body.Bytes(), &response)
+	err := json.Unmarshal(w.Body.Bytes(), &response)
+	if err != nil {
+		t.Fatalf("Failed to unmarshal JSON: %v", err)
+	}
 
 	assert.NotNil(t, response["message"])
 	assert.Equal(t, "PONG", response["message"])
@@ -54,7 +57,10 @@ func TestFetchPrices(t *testing.T) {
 		router.ServeHTTP(w, req)
 
 		var response map[string]any;
-		json.Unmarshal(w.Body.Bytes(), &response)
+		err := json.Unmarshal(w.Body.Bytes(), &response)
+		if err != nil {
+			t.Fatalf("Failed to unmarshal JSON: %v", err)
+		}
 
 		assert.Equal(t, http.StatusBadRequest, w.Code)
 		assert.Equal(t, "Missing 'crypto' query parameter", response["error"])
@@ -66,7 +72,10 @@ func TestFetchPrices(t *testing.T) {
 		router.ServeHTTP(w, req)
 
 		var response map[string]any;
-		json.Unmarshal(w.Body.Bytes(), &response)
+		err := json.Unmarshal(w.Body.Bytes(), &response)
+		if err != nil {
+			t.Fatalf("Failed to unmarshal JSON: %v", err)
+		}
 
 		assert.Equal(t, http.StatusBadRequest, w.Code)
 		assert.Equal(t, "Missing 'currency' query parameter", response["error"])
@@ -80,7 +89,10 @@ func TestFetchPrices(t *testing.T) {
 		assert.Equal(t, http.StatusOK, w.Code)
 	
 		var response map[string]any;
-		json.Unmarshal(w.Body.Bytes(), &response)
+		err := json.Unmarshal(w.Body.Bytes(), &response)
+		if err != nil {
+			t.Fatalf("Failed to unmarshal JSON: %v", err)
+		}
 	
 		assert.NotNil(t, response["prices"])
 		assert.Equal(t, 45000.00, response["prices"].(map[string]any)["bitcoin"])
@@ -95,7 +107,10 @@ func TestFetchPrices(t *testing.T) {
 		assert.Equal(t, http.StatusInternalServerError, w.Code)
 	
 		var response map[string]any;
-		json.Unmarshal(w.Body.Bytes(), &response)
+		err := json.Unmarshal(w.Body.Bytes(), &response)
+		if err != nil {
+			t.Fatalf("Failed to unmarshal JSON: %v", err)
+		}
 	
 		assert.Equal(t, http.StatusInternalServerError, w.Code)
 		assert.Equal(t, "Failed to fetch prices", response["error"])
