@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/go-resty/resty/v2"
-	"github.com/undersleep7x/cryo-project/app"
+	"github.com/undersleep7x/cryo-project/internal/app"
 )
 
 // fetch prices from coingecko api

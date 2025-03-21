@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/tidwall/gjson"
-	"github.com/undersleep7x/cryo-project/app"
+	"github.com/undersleep7x/cryo-project/internal/app"
 )
 
 type FetchCryptoPriceService interface {

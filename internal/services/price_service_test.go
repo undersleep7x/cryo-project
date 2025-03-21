@@ -9,7 +9,7 @@ import (
 	"github.com/go-resty/resty/v2"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
-	"github.com/undersleep7x/cryo-project/app"
+	"github.com/undersleep7x/cryo-project/internal/app"
 )
 
 // mock redis and api call for testing
