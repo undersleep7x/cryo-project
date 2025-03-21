@@ -9,7 +9,7 @@ import (
 
 // dummy config file for testing
 func createDummyConfigFile(t *testing.T) {
-	configDir := "utils/config"
+	configDir := "config"
 	if err := os.MkdirAll(configDir, 0755); err != nil {
 		t.Fatalf("Failed to create config directory: %v", err)
 	}
@@ -35,7 +35,7 @@ coingecko:
   timeout: 5
   retry_attempts: 3
 `
-	configFilePath := "utils/config/local_config.yml"
+	configFilePath := "config/git_testing_config.yml"
 	if err := os.WriteFile(configFilePath, []byte(dummyConfigContent), 0644); err != nil {
 		t.Fatalf("Failed to write dummy config file: %v", err)
 	}
@@ -43,7 +43,7 @@ coingecko:
 
 // clear the creating of the dummy log file when spinning up the config
 func removeDummyConfigFile(t *testing.T) {
-	configFilePath := "utils/"
+	configFilePath := "config/"
 	if err := os.RemoveAll(configFilePath); err != nil {
 		t.Fatalf("Failed to remove dummy config file: %v", err)
 	}
@@ -51,11 +51,11 @@ func removeDummyConfigFile(t *testing.T) {
 
 func TestLoadConfig(t *testing.T) {
 	// setup pre-testing configurations with logs and config file
-	os.Setenv("APP_ENV", "local")
-	defer os.Unsetenv("APP_ENV")
+	// os.Setenv("APP_ENV", "local")
+	// defer os.Unsetenv("APP_ENV")
 	createDummyConfigFile(t)
 	defer removeDummyConfigFile(t)
-	
+
 	InitApp()
 
 	// check that config exists and that its on a port
@@ -71,7 +71,6 @@ func TestSetupRedis(t *testing.T) {
 	// config file setup
 	createDummyConfigFile(t)
 	defer removeDummyConfigFile(t)
-	
 
 	// set initial redis configurations for testing
 	Config.Redis.Address = "localhost:6379"
@@ -93,7 +92,7 @@ func TestSetupLogging(t *testing.T) {
 	// config file setup
 	createDummyConfigFile(t)
 	defer removeDummyConfigFile(t)
-	
+
 	// set logging configs for test
 	tempLogFile := "test_log.log"
 	Config.Logging.FilePath = tempLogFile
