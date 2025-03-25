@@ -3,7 +3,7 @@ package main
 import (
 	"testing"
 
-	"github.com/undersleep7x/cryo-project/app"
+	"github.com/undersleep7x/cryo-project/internal/app"
 )
 
 func TestStartServer(t *testing.T) {
