@@ -1,0 +1,21 @@
+app:
+  name: "TestWallet"
+  environment: "local"
+  log_level: "debug"
+  port: "8080"
+logging:
+  file_path: "test_log.log"
+  max_size: 10
+  max_backups: 3
+  max_age: 30
+  permissions: 0644
+redis:
+  address: "localhost:6379"
+  password: ""
+  db: 0
+  timeout: 5
+  ttl: 300
+coingecko:
+  base_url: "https://api.coingecko.com"
+  timeout: 5
+  retry_attempts: 3
