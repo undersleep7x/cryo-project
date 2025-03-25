@@ -1,4 +1,4 @@
-package controllers
+package prices
 
 import (
 	"encoding/json"
@@ -9,47 +9,24 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
-	"github.com/undersleep7x/cryo-project/internal/services"
 )
 
-//mocking pricefetcher and implementing fetchCryptoPrice due to interface flexibility
-type mockPriceFetcher struct {
-	services.FetchCryptoPriceService
+type mockPriceHandler struct {
+	FetchCryptoPriceService
 }
 
-func (m *mockPriceFetcher) FetchCryptoPrice(cryptoList []string, currency string) (map[string]float64, error) {
+func (m *mockPriceHandler) FetchCryptoPrice(cryptoList []string, currency string) (map[string]float64, error) {
 	if currency == "se" {
 		return nil, errors.New("No currency provided")
 	}
 	return map[string]float64{"bitcoin": 45000.000, "ethereum": 3200.75}, nil
 }
 
-func TestPing(t *testing.T) {
-	router := gin.Default()
-	router.GET("/", Ping)
-
-	req, _ := http.NewRequest("GET", "/", nil)
-	w := httptest.NewRecorder()
-	router.ServeHTTP(w, req)
-
-	assert.Equal(t, http.StatusOK, w.Code)
-
-	var response map[string]any;
-	err := json.Unmarshal(w.Body.Bytes(), &response)
-	if err != nil {
-		t.Fatalf("Failed to unmarshal JSON: %v", err)
-	}
-
-	assert.NotNil(t, response["message"])
-	assert.Equal(t, "PONG", response["message"])
-
-}
-
 func TestFetchPrices(t *testing.T) {
 	router := gin.Default()
-	mockService := &mockPriceFetcher{}
-	priceFetcher := NewPriceFetcher(mockService)
-	router.GET("/price", priceFetcher.FetchPrices)
+	mockService := &mockPriceHandler{}
+	PriceHandler := NewPriceHandler(mockService)
+	router.GET("/price", PriceHandler.FetchPrices)
 
 	t.Run("Missing crypto", func(t *testing.T) {
 		req, _ := http.NewRequest("GET", "/price?currency=usd", nil)

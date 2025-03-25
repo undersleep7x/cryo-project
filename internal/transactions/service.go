@@ -1,18 +1,16 @@
-package services
+package transactions
 
 import (
 	"log"
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/undersleep7x/cryo-project/internal/models"
-	"github.com/undersleep7x/cryo-project/internal/repository"
 )
 
 // interface for transaction service
 type TransactionService interface {
-	CreateInvoice(models.InvoiceRequest) (*models.InvoiceResponse, error)
-	SendPayment(models.PaymentRequest) (*models.PaymentResponse, error)
+	CreateInvoice(InvoiceRequest) (*InvoiceResponse, error)
+	SendPayment(PaymentRequest) (*PaymentResponse, error)
 }
 type transactionsServiceImpl struct{}
 func NewTransactionsService() TransactionService {
@@ -20,11 +18,11 @@ func NewTransactionsService() TransactionService {
 }
 
 // service function for creating new invoice and saving to db
-func (s *transactionsServiceImpl) CreateInvoice(r models.InvoiceRequest) (*models.InvoiceResponse, error) {
+func (s *transactionsServiceImpl) CreateInvoice(r InvoiceRequest) (*InvoiceResponse, error) {
 	recipientHash := r.RecipientId + "RECIPHASH" //TODO implement hashing functionality here
-	resp := models.InvoiceResponse{}
+	resp := InvoiceResponse{}
 
-	inv := models.Invoice {
+	inv := Invoice {
 		ID: "txn_" + uuid.NewString(),
 		SenderType: r.SenderType,
 		RecipientRef: recipientHash,
@@ -38,7 +36,7 @@ func (s *transactionsServiceImpl) CreateInvoice(r models.InvoiceRequest) (*model
 		ExternalRef: r.ExternalRef,
 	}
 
-	err := repository.SaveTransaction(inv)
+	err := SaveTransaction(inv)
 	if err != nil {
 		log.Printf("Error saving new invoice to database: %v", err)
 		return nil, err
@@ -61,14 +59,14 @@ func (s *transactionsServiceImpl) CreateInvoice(r models.InvoiceRequest) (*model
 
 }
 
-func (s *transactionsServiceImpl) SendPayment(r models.PaymentRequest) (*models.PaymentResponse, error) {
+func (s *transactionsServiceImpl) SendPayment(r PaymentRequest) (*PaymentResponse, error) {
 	senderRef := r.SenderId + "hash"
 	recipRef := r.PaymentAddr + "hash"
-	response := models.PaymentResponse{}
+	response := PaymentResponse{}
 
 	if r.InvoiceId == "" { // flow for a direct payment
 
-		pay := models.Payment {
+		pay := Payment {
 			ID: "txn_" + uuid.NewString(),
 			SenderType: r.SenderType,
 			RecipientRef: recipRef,
@@ -82,7 +80,7 @@ func (s *transactionsServiceImpl) SendPayment(r models.PaymentRequest) (*models.
 			UpdatedAt: time.Now(),
 		}
 
-		err := repository.SaveTransaction(pay)
+		err := SaveTransaction(pay)
 		if err != nil {
 			log.Printf("Error saving new invoice to database: %v", err)
 			return nil, err
@@ -93,7 +91,7 @@ func (s *transactionsServiceImpl) SendPayment(r models.PaymentRequest) (*models.
 		response.TransactionId = pay.ID
 
 	} else { // flow for invoice payment
-		inv := repository.FindTransactionById(r.InvoiceId)
+		inv := FindTransactionById(r.InvoiceId)
 		// stubbed info
 		externalRef := "anexternalref"
 		inv.ExternalRef = &externalRef
@@ -106,7 +104,7 @@ func (s *transactionsServiceImpl) SendPayment(r models.PaymentRequest) (*models.
 		inv.SetStatus("Pending") //txn is on the way, will next be confirmed or failed
 		inv.SetUpdate(time.Now())
 
-		err := repository.UpdateTransactionById(inv)
+		err := UpdateTransactionById(inv)
 		if err != nil {
 			log.Printf("Error saving new invoice to database: %v", err)
 			return nil, err
