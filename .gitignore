@@ -1,3 +1,4 @@
 .DS_Store
-config/*
-!config/git_testing_config.yml
+internal/config/*
+!internal/config/git_testing_config.yml
+/internal/logs
