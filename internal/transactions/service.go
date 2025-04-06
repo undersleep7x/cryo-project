@@ -12,9 +12,11 @@ type TransactionService interface {
 	CreateInvoice(InvoiceRequest) (*InvoiceResponse, error)
 	SendPayment(PaymentRequest) (*PaymentResponse, error)
 }
-type transactionsServiceImpl struct{}
-func NewTransactionsService() TransactionService {
-	return &transactionsServiceImpl{}
+type transactionsServiceImpl struct{
+	r TxnRepository
+}
+func NewTransactionsService(repository TxnRepository) TransactionService {
+	return &transactionsServiceImpl{r: repository}
 }
 
 // service function for creating new invoice and saving to db
@@ -36,7 +38,7 @@ func (s *transactionsServiceImpl) CreateInvoice(r InvoiceRequest) (*InvoiceRespo
 		ExternalRef: r.ExternalRef,
 	}
 
-	err := SaveTransaction(inv)
+	err := s.r.SaveTransaction(inv)
 	if err != nil {
 		log.Printf("Error saving new invoice to database: %v", err)
 		return nil, err
@@ -80,7 +82,7 @@ func (s *transactionsServiceImpl) SendPayment(r PaymentRequest) (*PaymentRespons
 			UpdatedAt: time.Now(),
 		}
 
-		err := SaveTransaction(pay)
+		err := s.r.SaveTransaction(pay)
 		if err != nil {
 			log.Printf("Error saving new invoice to database: %v", err)
 			return nil, err
@@ -91,7 +93,7 @@ func (s *transactionsServiceImpl) SendPayment(r PaymentRequest) (*PaymentRespons
 		response.TransactionId = pay.ID
 
 	} else { // flow for invoice payment
-		inv := FindTransactionById(r.InvoiceId)
+		inv := s.r.FindTransactionById(r.InvoiceId)
 		// stubbed info
 		externalRef := "anexternalref"
 		inv.ExternalRef = &externalRef
@@ -104,7 +106,7 @@ func (s *transactionsServiceImpl) SendPayment(r PaymentRequest) (*PaymentRespons
 		inv.SetStatus("Pending") //txn is on the way, will next be confirmed or failed
 		inv.SetUpdate(time.Now())
 
-		err := UpdateTransactionById(inv)
+		err := s.r.UpdateTransactionById(inv)
 		if err != nil {
 			log.Printf("Error saving new invoice to database: %v", err)
 			return nil, err

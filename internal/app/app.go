@@ -8,9 +8,14 @@ import (
 	"os"
 	"time"
 
-	"github.com/go-redis/redis/v8"
-	"gopkg.in/yaml.v3"
 	"github.com/gin-gonic/gin"
+	"github.com/go-redis/redis/v8"
+	cacheInfra "github.com/undersleep7x/cryo-project/internal/infra/cache"
+	platformRedis "github.com/undersleep7x/cryo-project/internal/platform/redis"
+	"github.com/undersleep7x/cryo-project/internal/prices"
+	"github.com/undersleep7x/cryo-project/internal/transactions"
+	"github.com/undersleep7x/cryo-project/api/routes"
+	"gopkg.in/yaml.v3"
 )
 
 type ConfigStruct struct { //utilize config files to start app services
@@ -67,6 +72,11 @@ var Config ConfigStruct
 var RedisClient RedisClientInterface
 var Router *gin.Engine
 
+type Handlers struct {
+	PriceHandler *prices.PriceHandler
+	TxnHandler *transactions.TransactionsHandler
+}
+
 // load configuration file for later implementation
 func loadConfig() {
 	env := os.Getenv("APP_ENV")
@@ -86,18 +96,28 @@ func loadConfig() {
 	if err != nil {
 		log.Fatalf("Failed to parse YAML: %v", err)
 	}
+
+	if Config.Redis.Address == "" {
+		envAddr := os.Getenv("REDIS_HOST")
+		if envAddr == "" {
+			envAddr = "redis:6379" // default fallback
+		}
+		Config.Redis.Address = envAddr
+	}
+
 	log.Println("Config initialized")
 }
 
 // setup redis server for caching
 func setupRedis() {
-	RedisClient = &RedisClientWrapper{
-		client: redis.NewClient(&redis.Options{
-			Addr: Config.Redis.Address,
-			Password: Config.Redis.Password,
-			DB: Config.Redis.DB,
-		}),
-	}
+
+	rawRedisClient := redis.NewClient(&redis.Options{
+		Addr: Config.Redis.Address,
+		Password: Config.Redis.Password,
+		DB: Config.Redis.DB,
+	})
+
+	RedisClient = platformRedis.NewRedisClientWrapper(rawRedisClient)
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
@@ -127,6 +147,26 @@ func setupLogging() {
 	log.Println("Logger initialized")
 }
 
+func StartRouter() {
+	Router = gin.Default()
+
+	priceCache := cacheInfra.NewPriceCache(RedisClient)
+	priceConfig := prices.Config{
+		BaseURL: Config.CoinGecko.BaseURL,
+		Timeout: Config.CoinGecko.Timeout,
+		RetryAttempts: Config.CoinGecko.RetryAttempts,
+	}
+	priceService := prices.NewFetchCryptoPriceService(priceCache, priceConfig)
+	priceHandler := prices.NewPriceHandler(priceService)
+
+	txnRepository := transactions.NewTxnRepository()
+	txnService := transactions.NewTransactionsService(txnRepository)
+	txnHandler := transactions.NewTransactionsHandler(txnService)
+
+
+	routes.SetupRoutes(Router, priceHandler, txnHandler)
+}
+
 // startup application and configurations
 func InitApp() {
 	log.Println("Initializing config...")
@@ -135,7 +175,7 @@ func InitApp() {
 	setupLogging()
 	log.Println("Loading Redis cache...")
 	setupRedis()
-	log.Println("Setting router...")
-	Router = gin.Default()
+	log.Println("Wiring interfaces and router...")
+	StartRouter()
 	log.Println("App initialized")
 }

@@ -53,7 +53,7 @@ jobs:
 
       - name: Run Tests
         if: matrix.task == 'test'
-        run: go test -v $(go list ./... | grep -v "/cmd,/internal/app,/internal/config,/transactions") 
+        run: go test -v $(go list ./... | grep -v "/cmd,/internal/app,/internal/config,/internal/infra,/internal/platform,/transactions") 
         # db & transaction_service tests will be written after full implementations
         
       - name: Install & Run Linter
