@@ -1,4 +1,6 @@
 .DS_Store
 internal/config/*
-!internal/config/git_testing_config.yml
 /internal/logs
+!*.toml
+.env*
+tmp/*
