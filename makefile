@@ -23,7 +23,7 @@ run:
 	go run ./cmd/main.go
 
 docker-build:
-	docker build -t ${DOCKER_IMAGE}
+	docker build -t ${DOCKER_IMAGE} .
 
 docker-up:
 	docker-compose up --build
