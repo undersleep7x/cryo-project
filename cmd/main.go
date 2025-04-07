@@ -12,12 +12,12 @@ import (
 func startServer() *http.Server {
 
 
-	app.InitApp() //kicks off initialization of necessary precursors like redis and logging
+	a := app.InitApp() //kicks off initialization of necessary precursors like redis and logging
 
-	port := app.Config.App.Port
+	port := a.Config.Port
 	server := &http.Server{
 		Addr:    fmt.Sprintf(":%s", port),
-		Handler: app.Router,
+		Handler: a.Router,
 	}
 	log.Printf("Server is now running on port %s", port)
 	return server

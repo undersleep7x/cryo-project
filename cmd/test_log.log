@@ -1,9 +1,0 @@
-2025/04/07 03:31:02 app.go:155: Logger initialized
-2025/04/07 03:31:02 app.go:192: Loading Redis cache...
-2025/04/07 03:31:02 app.go:135: Redis connection failed: dial tcp [::1]:6379: connect: connection refused
-2025/04/07 03:38:03 app.go:155: Logger initialized
-2025/04/07 03:38:03 app.go:192: Loading Redis cache...
-2025/04/07 03:38:03 app.go:135: Redis connection failed: dial tcp [::1]:6379: connect: connection refused
-2025/04/07 03:54:08 app.go:161: Logger initialized
-2025/04/07 03:54:08 app.go:194: Loading Redis cache...
-2025/04/07 03:54:08 app.go:141: Redis connection failed: dial tcp [::1]:6379: connect: connection refused
