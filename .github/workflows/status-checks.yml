@@ -9,9 +9,12 @@ on:
 jobs:
   ci:
     runs-on: ubuntu-latest
+
     services:
       redis:
         image: redis:latest
+        ports:
+          - 6379:6379
 
     steps:
       - name: Checkout Code
@@ -23,7 +26,5 @@ jobs:
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
 
-      - name: Build and Test inside Docker
-        run: |
-          docker compose build
-          docker compose run --rm app make docker-ci
+      - name: Run Makefile CI Checks
+        run: make docker-ci
