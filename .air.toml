@@ -1,24 +1,11 @@
-cmd = "./tmp/main"
-bin = "./tmp/main"
+root = "."
+tmp_dir = "tmp"
 
-# Watch these directories
-[include]
-  dirs = ["./cmd"]
-  exts = ["go", "tpl", "tmpl", "html"]
-
-# Ignore these files/folders
-[exclude]
-  dirs = ["tmp", "vendor", ".git", "node_modules"]
-  files = ["*.log", "*.tmp"]
-
-# Set logging behavior
-[log]
-  time = true
-
-# Use native Go module
 [build]
-  cmd = "go build -o ../tmp/main main.go"
-  bin = "../tmp/main"
+  cmd = "go build -o ./tmp/main ./cmd/main.go"
+  bin = "tmp/main"
   full_bin = true
-  delay = 1000 # ms
-  exclude_dir = ["assets", "tmp"]
+  delay = 1000
+  include_ext = ["go"]
+  exclude_dir = ["vendor", "tmp"]
+  include_dir = ["cmd", "internal"]
