@@ -1,4 +1,4 @@
-name: Status Checks  # Workflow name
+name: Status Checks
 
 on:
   pull_request:
@@ -7,58 +7,23 @@ on:
       - develop
 
 jobs:
-  build:
+  ci:
     runs-on: ubuntu-latest
+
     services:
       redis:
         image: redis:latest
-        ports:
-          - 6379:6379
-
-    strategy:
-      matrix:
-        task: [test, lint]  # Runs both tests and linting in parallel
 
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Setup Go
-        uses: actions/setup-go@v5
-        with:
-          go-version: '1.24'  # Ensure correct Go version
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v3
 
-      - name: Verify Go Installation
-        run: go version  # Debugging step
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
 
-      - name: Install Dependencies
-        run: go mod tidy  # Ensure dependencies are set up
-
-      - name: Install Redis CLI
-        run: sudo apt-get update && sudo apt-get install -y redis-tools
-
-      - name: Wait for Redis to be Ready
-        run: |
-          echo "Checking Redis availability..."
-          for i in {1..10}; do
-            if redis-cli ping | grep PONG; then
-              echo "Redis is up!"
-              exit 0
-            fi
-            echo "Waiting for Redis... retrying in 2 seconds"
-            sleep 2
-          done
-          echo "Redis did not start in time. Exiting."
-          exit 1
-
-      - name: Run Tests
-        if: matrix.task == 'test'
-        run: go test -v $(go list ./... | grep -v "/cmd,/internal/app,/internal/config,/transactions") 
-        # db & transaction_service tests will be written after full implementations
-        
-      - name: Install & Run Linter
-        if: matrix.task == 'lint'
-        run: |
-          go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
-          echo "$HOME/go/bin" >> $GITHUB_PATH
-          golangci-lint run ./...
+      - name: Run Makefile CI Checks
+        working-directory: ./cmd
+        run: make docker-ci
