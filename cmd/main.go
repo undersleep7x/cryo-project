@@ -10,6 +10,8 @@ import (
 )
 
 func startServer() *http.Server {
+
+
 	app.InitApp() //kicks off initialization of necessary precursors like redis and logging
 
 	port := app.Config.App.Port

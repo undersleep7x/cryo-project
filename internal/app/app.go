@@ -10,11 +10,12 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis/v8"
+	"github.com/joho/godotenv"
+	"github.com/undersleep7x/cryo-project/api/routes"
 	cacheInfra "github.com/undersleep7x/cryo-project/internal/infra/cache"
 	platformRedis "github.com/undersleep7x/cryo-project/internal/platform/redis"
 	"github.com/undersleep7x/cryo-project/internal/prices"
 	"github.com/undersleep7x/cryo-project/internal/transactions"
-	"github.com/undersleep7x/cryo-project/api/routes"
 	"gopkg.in/yaml.v3"
 )
 
@@ -79,10 +80,23 @@ type Handlers struct {
 
 // load configuration file for later implementation
 func loadConfig() {
-	env := os.Getenv("APP_ENV")
+	env := os.Getenv("ENV")
 	if env == ""{
 		log.Println("No application environment found; loading with local env config.")
-		env = "git_testing"
+		env = "dev"
+	}
+
+	if env == "dev" {
+        if err := godotenv.Load(".env.dev"); err != nil {
+            log.Println("No .env.dev file found — relying on system environment")
+        }
+	}
+
+	port := os.Getenv("PORT")
+	if port == ""{
+		log.Println("No port found, loading with config port")
+	} else{
+		Config.App.Port = port
 	}
 
 	configFile := fmt.Sprintf("../internal/config/%s_config.yml", env)
@@ -98,11 +112,11 @@ func loadConfig() {
 	}
 
 	if Config.Redis.Address == "" {
-		envAddr := os.Getenv("REDIS_HOST")
-		if envAddr == "" {
-			envAddr = "redis:6379" // default fallback
+		redisAddr := os.Getenv("REDIS_HOST")
+		if redisAddr == "" {
+			redisAddr = "redis:6379" // default fallback
 		}
-		Config.Redis.Address = envAddr
+		Config.Redis.Address = redisAddr
 	}
 
 	log.Println("Config initialized")
@@ -165,6 +179,10 @@ func StartRouter() {
 
 
 	routes.SetupRoutes(Router, priceHandler, txnHandler)
+}
+
+func loadEnvVars() {
+	
 }
 
 // startup application and configurations
