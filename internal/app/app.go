@@ -9,19 +9,19 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/go-redis/redis/v8"
+	redis "github.com/redis/go-redis/v9"
 	"github.com/undersleep7x/cryo-project/api/routes"
 	"github.com/undersleep7x/cryo-project/internal/config"
 	cacheInfra "github.com/undersleep7x/cryo-project/internal/infra/cache"
-	platformRedis "github.com/undersleep7x/cryo-project/internal/platform/redis"
+	platformRedis "github.com/undersleep7x/cryo-project/internal/platform/redisstore"
 	"github.com/undersleep7x/cryo-project/internal/prices"
 	"github.com/undersleep7x/cryo-project/internal/transactions"
 )
 
 type App struct {
-	Config *config.AppConfig
+	Config     *config.AppConfig
 	RedisCache platformRedis.RedisClient
-	Router *gin.Engine
+	Router     *gin.Engine
 }
 
 // load configuration file for implementation
@@ -34,9 +34,9 @@ func loadAppConfig() *App {
 	log.Println("Loading Redis cache...")
 	redisAddr := fmt.Sprintf("%s:%s", cfg.RedisHost, cfg.RedisPort)
 	rawRedisClient := redis.NewClient(&redis.Options{
-		Addr: redisAddr,
+		Addr:     redisAddr,
 		Password: "",
-		DB: 0,
+		DB:       0,
 	})
 	RedisClient := platformRedis.NewRedisClientWrapper(rawRedisClient)
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
@@ -50,8 +50,8 @@ func loadAppConfig() *App {
 	router := gin.Default()
 	priceCache := cacheInfra.NewPriceCache(RedisClient)
 	priceConfig := prices.Config{
-		BaseURL: "https://api.coingecko.com/api/v3",
-		Timeout: 5,
+		BaseURL:       "https://api.coingecko.com/api/v3",
+		Timeout:       5,
 		RetryAttempts: 3,
 	}
 	priceService := prices.NewFetchCryptoPriceService(priceCache, priceConfig)
@@ -65,9 +65,9 @@ func loadAppConfig() *App {
 	log.Println("Config initialized")
 
 	return &App{
-		Config: cfg,
+		Config:     cfg,
 		RedisCache: RedisClient,
-		Router: router,
+		Router:     router,
 	}
 }
 
@@ -86,7 +86,6 @@ func setupLogging(cfg *config.AppConfig) {
 	log.SetFlags(log.Ldate | log.Ltime | log.Lshortfile) //log formatting
 	log.Println("Logger initialized")
 }
-
 
 // startup application and configurations
 func InitApp() *App {

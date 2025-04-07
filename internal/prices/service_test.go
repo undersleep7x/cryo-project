@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/go-resty/resty/v2"
+	resty "github.com/go-resty/resty/v2"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"github.com/undersleep7x/cryo-project/internal/infra/cache"
@@ -18,15 +18,15 @@ type MockRedisClient struct {
 }
 
 func (m *MockRedisClient) Get(ctx context.Context, key string) (string, error) {
-	args := m.Called(ctx, key)
+	args := m.Mock.Called(ctx, key)
 	return args.String(0), args.Error(1)
 }
 func (m *MockRedisClient) Set(ctx context.Context, key string, value interface{}, expiration time.Duration) error {
-	args := m.Called(ctx, key, value, expiration)
+	args := m.Mock.Called(ctx, key, value, expiration)
 	return args.Error(0)
 }
 func (m *MockRedisClient) Ping(ctx context.Context) error {
-	args := m.Called(ctx)
+	args := m.Mock.Called(ctx)
 	return args.Error(0)
 }
 
@@ -35,12 +35,9 @@ type MockAPI struct {
 }
 
 func (m *MockAPI) FetchPrices(cryptoList []string, currency string, baseURL string, timeoutVal int) (*resty.Response, error) {
-	args := m.Called(cryptoList, currency, baseURL, timeoutVal)
+	args := m.Mock.Called(cryptoList, currency, baseURL, timeoutVal)
 	return args.Get(0).(*resty.Response), args.Error(1)
 }
-
-
-
 
 func TestFetchCryptoPrice(t *testing.T) {
 	// set starter variables for test cases
@@ -51,7 +48,6 @@ func TestFetchCryptoPrice(t *testing.T) {
 		Timeout:       5,
 		RetryAttempts: 1,
 	}
-	
 
 	// test response if value is found in cache
 	t.Run("Cache Hit", func(t *testing.T) {
@@ -61,7 +57,7 @@ func TestFetchCryptoPrice(t *testing.T) {
 		service := NewFetchCryptoPriceService(mockPriceCache, testConfig)
 
 		cachedData := `{"bitcoin": 45000.00}`
-		mockRedis.On("Get", mock.Anything, "prices:bitcoin:usd").Return(cachedData, nil)
+		mockRedis.Mock.On("Get", mock.Anything, "prices:bitcoin:usd").Return(cachedData, nil)
 
 		// make method call and record response, should have no error and match test data
 		prices, err := service.FetchCryptoPrice(cryptoSymbols, currency)
@@ -85,15 +81,15 @@ func TestFetchCryptoPrice(t *testing.T) {
 		}
 
 		// set mock redis behavior to trigger api check
-		mockRedis.On("Get", mock.Anything, "prices:bitcoin:usd").Return("", errors.New("redis connection error"))
+		mockRedis.Mock.On("Get", mock.Anything, "prices:bitcoin:usd").Return("", errors.New("redis connection error"))
 
 		// set dummy response from resty call in method
 		dummyErrorResponse := &resty.Response{}
 		dummyErrorResponse.SetBody([]byte(`{}`))
 
 		// set mock api behavior and post call redis behavior
-		mockAPI.On("FetchPrices", cryptoSymbols, currency, testConfig.BaseURL, testConfig.Timeout).Return(dummyErrorResponse, nil)
-		mockRedis.On("Set", mock.Anything, "prices:bitcoin:usd", mock.Anything, 30*time.Second).Return(nil)
+		mockAPI.Mock.On("FetchPrices", cryptoSymbols, currency, testConfig.BaseURL, testConfig.Timeout).Return(dummyErrorResponse, nil)
+		mockRedis.Mock.On("Set", mock.Anything, "prices:bitcoin:usd", mock.Anything, 30*time.Second).Return(nil)
 
 		// make method call, should return fallback price for crypto
 		prices, err := service.FetchCryptoPrice(cryptoSymbols, currency)
@@ -109,7 +105,7 @@ func TestFetchCryptoPrice(t *testing.T) {
 		service := NewFetchCryptoPriceService(mockPriceCache, testConfig)
 
 		// set mock redis response
-		mockRedis.On("Get", mock.Anything, "prices:bitcoin:usd").Return("", errors.New("redis connection error"))
+		mockRedis.Mock.On("Get", mock.Anything, "prices:bitcoin:usd").Return("", errors.New("redis connection error"))
 
 		// switch the method for the mock method and revert after ending test
 		originalFetchPrices := FetchPrices
@@ -121,8 +117,8 @@ func TestFetchCryptoPrice(t *testing.T) {
 		//set dummy resty response and mock api response/ post api call redis action
 		dummyResponse := &resty.Response{}
 		dummyResponse.SetBody([]byte(`{"bitcoin":{"usd":47000.00}}`))
-		mockAPI.On("FetchPrices", cryptoSymbols, currency, testConfig.BaseURL, testConfig.Timeout).Return(dummyResponse, nil)
-		mockRedis.On("Set", mock.Anything, "prices:bitcoin:usd", mock.Anything, 30*time.Second).Return(nil)
+		mockAPI.Mock.On("FetchPrices", cryptoSymbols, currency, testConfig.BaseURL, testConfig.Timeout).Return(dummyResponse, nil)
+		mockRedis.Mock.On("Set", mock.Anything, "prices:bitcoin:usd", mock.Anything, 30*time.Second).Return(nil)
 
 		// make method call, should return expected price for crypto
 		prices, err := service.FetchCryptoPrice(cryptoSymbols, currency)
@@ -145,11 +141,11 @@ func TestFetchCryptoPrice(t *testing.T) {
 		}
 
 		// set mock responses from redis and api call
-		mockRedis.On("Get", mock.Anything, "prices:bitcoin:usd").Return("", errors.New("redis: nil"))
+		mockRedis.Mock.On("Get", mock.Anything, "prices:bitcoin:usd").Return("", errors.New("redis: nil"))
 		dummyResponse := &resty.Response{}
 		dummyResponse.SetBody([]byte(`{"bitcoin":{"usd":46000.00}}`))
-		mockAPI.On("FetchPrices", cryptoSymbols, currency, testConfig.BaseURL, testConfig.Timeout).Return(dummyResponse, nil)
-		mockRedis.On("Set", mock.Anything, "prices:bitcoin:usd", mock.Anything, 30*time.Second).Return(nil)
+		mockAPI.Mock.On("FetchPrices", cryptoSymbols, currency, testConfig.BaseURL, testConfig.Timeout).Return(dummyResponse, nil)
+		mockRedis.Mock.On("Set", mock.Anything, "prices:bitcoin:usd", mock.Anything, 30*time.Second).Return(nil)
 
 		// make method call, should fail to find in redis and return from api call
 		prices, err := service.FetchCryptoPrice(cryptoSymbols, currency)

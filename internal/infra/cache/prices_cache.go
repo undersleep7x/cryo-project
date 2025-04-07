@@ -3,7 +3,7 @@ package cache
 import (
 	"context"
 	"time"
-	platformRedis "github.com/undersleep7x/cryo-project/internal/platform/redis"
+	platformRedis "github.com/undersleep7x/cryo-project/internal/platform/redisstore"
 )
 
 type PriceCache struct {
