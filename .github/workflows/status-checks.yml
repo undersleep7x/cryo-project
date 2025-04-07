@@ -27,4 +27,5 @@ jobs:
         uses: docker/setup-qemu-action@v3
 
       - name: Run Makefile CI Checks
+        working-directory: ./cmd
         run: make docker-ci
