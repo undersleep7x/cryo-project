@@ -26,4 +26,6 @@ jobs:
 
       - name: Run Makefile CI Checks
         working-directory: ./
+        env:
+          GOFLAGS: "-buildvcs=false"
         run: make docker-ci
