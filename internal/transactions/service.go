@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	utils "github.com/undersleep7x/cryo-project/internal/utils"
 )
 
 // interface for transaction service
@@ -21,7 +22,11 @@ func NewTransactionsService(repository TxnRepository) TransactionService {
 
 // service function for creating new invoice and saving to db
 func (s *transactionsServiceImpl) CreateInvoice(r InvoiceRequest) (*InvoiceResponse, error) {
-	recipientHash := r.RecipientId + "RECIPHASH" //TODO implement hashing functionality here
+	currTime := time.Now()
+	userCreateTime := time.Now() //TODO will be replaced with user creation time when db flow more solidified
+	concatRef := utils.BuildReferenceString(r.RecipientId, currTime.Format(time.RFC3339), userCreateTime.Format(time.RFC3339))
+	recipientHash := utils.GenerateRef("hmac-key", concatRef, "dev") //TODO key will be merchant.account_ref
+
 	resp := InvoiceResponse{}
 
 	inv := Invoice {

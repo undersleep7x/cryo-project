@@ -386,3 +386,25 @@
 2025/03/20 02:10:26 api_calls.go:23: Making API call to https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_currencies=usd
 2025/03/20 02:10:31 price_service.go:43: Successfully retrieved cached price data for bitcoin
 2025/03/20 02:10:31 price_service.go:43: Successfully retrieved cached price data for ethereum
+2025/04/10 18:17:22 app.go:87: Logger initialized
+2025/04/10 18:17:22 app.go:34: Loading Redis cache...
+2025/04/10 18:17:22 app.go:47: Redis connected successfully
+2025/04/10 18:17:22 app.go:49: Wiring interfaces and router...
+2025/04/10 18:17:22 app.go:65: Config initialized
+2025/04/10 18:17:22 app.go:94: App initialized
+2025/04/10 18:17:22 main.go:22: Server is now running on port 8080
+2025/04/10 18:20:52 service.go:131: One time address successfully generated
+2025/04/10 18:22:04 app.go:87: Logger initialized
+2025/04/10 18:22:04 app.go:34: Loading Redis cache...
+2025/04/10 18:22:04 app.go:47: Redis connected successfully
+2025/04/10 18:22:04 app.go:49: Wiring interfaces and router...
+2025/04/10 18:22:04 app.go:65: Config initialized
+2025/04/10 18:22:04 app.go:94: App initialized
+2025/04/10 18:22:04 main.go:22: Server is now running on port 8080
+2025/04/10 18:24:07 app.go:87: Logger initialized
+2025/04/10 18:24:07 app.go:34: Loading Redis cache...
+2025/04/10 18:24:07 app.go:47: Redis connected successfully
+2025/04/10 18:24:07 app.go:49: Wiring interfaces and router...
+2025/04/10 18:24:07 app.go:65: Config initialized
+2025/04/10 18:24:07 app.go:94: App initialized
+2025/04/10 18:24:07 main.go:22: Server is now running on port 8080

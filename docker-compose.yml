@@ -5,7 +5,7 @@ services:
     build:
       context: .
     container_name: cryowallet-app
-    working_dir: /app/cmd
+    working_dir: /app
     ports:
       - "8080:8080"
     volumes:
@@ -13,7 +13,7 @@ services:
     depends_on:
       - redis
     environment:
-      - APP_ENV=local
+      - ENV=dev
       - REDIS_HOST=redis
       - REDIS_PORT=6379
     command: ["air"]
