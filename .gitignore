@@ -1,6 +1,4 @@
 .DS_Store
-internal/config/*
 /internal/logs
 !*.toml
 .env*
-tmp/*
