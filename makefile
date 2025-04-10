@@ -7,16 +7,16 @@ TEST_PATHS=./internal/prices/...
 
 # Lint inside container
 lint:
-	docker compose run --rm app golangci-lint run ./...
+	docker compose run --rm GOFLAGS="-buildvcs=false" app golangci-lint run ./...
 
 # Run tests + coverage inside container
 test:
-	docker compose run --rm app sh -c "\
+	docker compose run --rm GOFLAGS="-buildvcs=false" app sh -c "\
 		go test -v -coverprofile=coverage.out ${TEST_PATHS} && \
 		go tool cover -func=coverage.out"
 
 coverage:
-	docker compose run --rm app sh -c '\
+	docker compose run --rm GOFLAGS="-buildvcs=false" app sh -c '\
 		go test -v -coverprofile=coverage.out ${TEST_PATHS} && \
 		go tool cover -func=coverage.out && \
 		coverage=$$(go tool cover -func=coverage.out | grep total: | awk '\''{print $$3}'\'' | sed '\''s/%//'\''); \
@@ -45,4 +45,4 @@ clean:
 
 # Build and Test with Docker
 build-and-test:
-	docker compose run --rm app make docker-ci
+	docker compose run --rm GOFLAGS="-buildvcs=false" app make docker-ci
