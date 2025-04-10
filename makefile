@@ -42,7 +42,3 @@ docker-down:
 # Cleanup
 clean:
 	rm -f coverage.out
-
-# Build and Test with Docker
-build-and-test:
-	docker compose run --rm -e GOFLAGS="-buildvcs=false" app make docker-ci
