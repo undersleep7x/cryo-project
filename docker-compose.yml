@@ -8,18 +8,58 @@ services:
     working_dir: /app
     ports:
       - "8080:8080"
-    volumes:
-      - .:/app
     depends_on:
       - redis
-    environment:
-      - ENV=dev
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
-    command: ["air"]
+      - postgres
+    env_file:
+      - .env.dev
+    command: ["sh", "-c", "until pg_isready -h postgres -U cryouser -d cryo; do echo waiting for db; sleep 2; done; air -c .air.toml"]
+    networks:
+      - cryo-net
   
   redis:
     image: redis:7.0-alpine
     container_name: cryowallet-redis
     ports:
       - "6379:6379"
+    networks:
+      - cryo-net
+  
+  postgres:
+    image: postgres:15
+    container_name: cryo-postgres
+    ports:
+      - "5432:5432"
+    env_file:
+      - .env.dev
+    volumes:
+      - ./migrations/init_schema.sql:/docker-entrypoint-initdb.d/init_schema.sql
+    networks:
+      - cryo-net
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "cryouser", "-d", "cryodb"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+  
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: cryo-pgadmin
+    restart: unless-stopped
+    ports:
+      - "5050:80"
+    env_file:
+      - .env.dev
+    depends_on:
+      - postgres
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    networks:
+      - cryo-net
+
+networks:
+  cryo-net:
+    driver: bridge
+
+volumes:
+  pgadmin-data:

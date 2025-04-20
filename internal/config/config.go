@@ -7,6 +7,13 @@ import (
 	"github.com/joho/godotenv"
 )
 
+type DBConfig struct {
+	Host string
+	Port string
+	User string
+	Password string
+	Name string
+}
 type AppConfig struct {
 	Env       string
 	Port      string
@@ -14,6 +21,7 @@ type AppConfig struct {
 	RedisPort string
 	LoggingPath string
 	LoggingPerms string
+	DB DBConfig
 }
 
 func LoadConfig() *AppConfig {
@@ -36,6 +44,13 @@ func LoadConfig() *AppConfig {
 		RedisPort: getEnv("REDIS_PORT", "6379"),
 		LoggingPath: getEnv("LOGGING_PATH", "logs/apps.log"),
 		LoggingPerms: getEnv("LOGGING_PERMS", "0666"),
+		DB: DBConfig{
+			Host: getEnv("DB_HOST", "postgres"),
+			Port: getEnv("DB_PORT", "5432"),
+			User: getEnv("DB_USER", "cryouser"),
+			Password: getEnv("DB_PASSWORD", "cryopass"),
+			Name: getEnv("DB_NAME", "cryo"),
+		},
 	}
 }
 

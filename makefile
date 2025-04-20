@@ -3,7 +3,7 @@ DOCKER_IMAGE=cryowallet-dev
 COVERAGE_THRESHOLD=80.0
 TEST_PATHS=./internal/prices/...
 
-.PHONY: ci docker-ci docker-build docker-up docker-down clean lint test coverage
+.PHONY: ci docker-ci docker-build docker-up docker-down clean lint test coverage docker-refresh
 
 # Lint inside container
 lint:
@@ -37,7 +37,12 @@ docker-up:
 
 # Tear down containers
 docker-down:
-	docker compose down -v
+	docker compose down -v --remove-orphans
+
+docker-refresh:
+	docker compose down -v --remove-orphans
+	docker compose build --no-cache
+	docker compose up
 
 # Cleanup
 clean:

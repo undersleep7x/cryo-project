@@ -2,10 +2,13 @@ root = "."
 tmp_dir = "tmp"
 
 [build]
-  cmd = "go build -o ./tmp/main ./cmd/main.go"
-  bin = "tmp/main"
-  full_bin = true
+  cmd = "go build -o ./tmp/main ./main.go"
+  full_bin = ""
   delay = 1000
   include_ext = ["go"]
   exclude_dir = ["vendor", "tmp"]
-  include_dir = ["cmd", "internal"]
+  include_dir = ["internal"]
+  poll = true  # necessary for live reload on mac silicon due to different file watchers
+
+[log]
+  time = true
