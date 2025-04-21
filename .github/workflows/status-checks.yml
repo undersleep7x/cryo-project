@@ -23,6 +23,12 @@ jobs:
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
+      
+      - name: Write .env.dev file from secrets
+        run: |
+          echo "POSTGRES_USER=${{ secrets.CRYO_POSTGRES_USER }}" >> .env.dev
+          echo "POSTGRES_PASSWORD=${{ secrets.CRYO_POSTGRES_PASSWORD }}" >> .env.dev
+          echo "POSTGRES_DB=${{ secrets.CRYO_POSTGRES_DB }}" >> .env.dev
 
       - name: Run Makefile CI Checks
         working-directory: ./

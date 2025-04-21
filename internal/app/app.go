@@ -13,6 +13,8 @@ import (
 	"github.com/undersleep7x/cryo-project/api/routes"
 	"github.com/undersleep7x/cryo-project/internal/config"
 	cacheInfra "github.com/undersleep7x/cryo-project/internal/infra/cache"
+	postgresInfra "github.com/undersleep7x/cryo-project/internal/infra/postgres"
+	platformPostgres "github.com/undersleep7x/cryo-project/internal/platform/postgresstore"
 	platformRedis "github.com/undersleep7x/cryo-project/internal/platform/redisstore"
 	"github.com/undersleep7x/cryo-project/internal/prices"
 	"github.com/undersleep7x/cryo-project/internal/transactions"
@@ -21,6 +23,7 @@ import (
 type App struct {
 	Config     *config.AppConfig
 	RedisCache platformRedis.RedisClient
+	PostgresDB platformPostgres.PostgresClient
 	Router     *gin.Engine
 }
 
@@ -31,24 +34,15 @@ func loadAppConfig() *App {
 	log.Println("Initializing logging...")
 	setupLogging(cfg)
 
+	log.Println("Initializing Postgres DB...")
+	postgresClient := setupPgDatabase(cfg)
+
 	log.Println("Loading Redis cache...")
-	redisAddr := fmt.Sprintf("%s:%s", cfg.RedisHost, cfg.RedisPort)
-	rawRedisClient := redis.NewClient(&redis.Options{
-		Addr:     redisAddr,
-		Password: "",
-		DB:       0,
-	})
-	RedisClient := platformRedis.NewRedisClientWrapper(rawRedisClient)
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-	if err := RedisClient.Ping(ctx); err != nil {
-		log.Fatalf("Redis connection failed: %v", err)
-	}
-	log.Println("Redis connected successfully")
+	redisClient := setupRedisCache(cfg)
 
 	log.Println("Wiring interfaces and router...")
 	router := gin.Default()
-	priceCache := cacheInfra.NewPriceCache(RedisClient)
+	priceCache := cacheInfra.NewPriceCache(redisClient)
 	priceConfig := prices.Config{
 		BaseURL:       "https://api.coingecko.com/api/v3",
 		Timeout:       5,
@@ -66,8 +60,9 @@ func loadAppConfig() *App {
 
 	return &App{
 		Config:     cfg,
-		RedisCache: RedisClient,
+		RedisCache: redisClient,
 		Router:     router,
+		PostgresDB: postgresClient,
 	}
 }
 
@@ -85,6 +80,40 @@ func setupLogging(cfg *config.AppConfig) {
 	}
 	log.SetFlags(log.Ldate | log.Ltime | log.Lshortfile) //log formatting
 	log.Println("Logger initialized")
+}
+
+func setupPgDatabase(cfg *config.AppConfig) platformPostgres.PostgresClient{
+	db, err := postgresInfra.NewPostgresClient(cfg.DB)
+	if err != nil {
+		log.Fatalf("Failed to open Postgres connection: %v", err)
+	}
+	pgClient := platformPostgres.NewPgClientWrapper(db)
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	if err := pgClient.Ping(ctx); err != nil {
+		log.Fatalf("Postgres client ping failed: %v", err)
+	}
+
+	log.Println("Postgres connected successfully")
+	return pgClient
+}
+
+func setupRedisCache(cfg *config.AppConfig) platformRedis.RedisClient {
+	redisAddr := fmt.Sprintf("%s:%s", cfg.RedisHost, cfg.RedisPort)
+	rawRedisClient := redis.NewClient(&redis.Options{
+		Addr:     redisAddr,
+		Password: "",
+		DB:       0,
+	})
+	redisClient := platformRedis.NewRedisClientWrapper(rawRedisClient)
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	if err := redisClient.Ping(ctx); err != nil {
+		log.Fatalf("Redis connection failed: %v", err)
+	}
+	log.Println("Redis connected successfully")
+	return redisClient
 }
 
 // startup application and configurations

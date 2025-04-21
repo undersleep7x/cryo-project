@@ -1,58 +1,61 @@
-# .golangci.yml
+version: "2"
+
 run:
   timeout: 5m
   tests: true
-  skip-dirs:
-    - vendor
-    - tmp
-    - /usr/local/go
-    - go
-    - runtime
 
-  skip-files:
-    - ".*_test\\.go"
-    - ".*/go/.*"
-    - ".*/usr/local/go/.*"
-    - ".*/runtime/.*"
-  include:
-    - "internal/"
-    - "cmd/"
-    - "api/"
-
-linters:
+linters:  
   enable:
     - govet
     - errcheck
-    - gosimple
     - staticcheck
     - unused
-    - deadcode
-    - structcheck
-    - varcheck
-    - typecheck
     - gocritic
-    - gofmt
-    - goimports
+  settings:
+    errcheck:
+      check-type-assertions: true
+      check-blank: true
+      disable-default-exclusions: false
+    govet:
+      enable:
+        - shadow
+  exclusions:
+    warn-unused: false
+    presets:
+      - comments
+      - common-false-positives
+      - std-error-handling
+      - legacy
+    paths:
+      - ".*_test\\.go"
+      - ".*/go/.*"
+      - ".*/usr/local/go/.*"
+      - ".*/runtime/.*"
+      - vendor
+      - tmp
+      - go
+      - runtime
+  
 
 issues:
-  exclude-use-default: false
   max-issues-per-linter: 0
   max-same-issues: 0
 
 output:
-  format: colored-line-number
-  print-issued-lines: true
-  print-linter-name: true
+  formats: 
+    text:
+      colors: true
+      print-issued-lines: true
+      print-linter-name: true
 
-gofmt:
-  simplify: true
-
-goimports:
-  local-prefixes: github.com/undersleep7x/cryo-project
-
-# Optional: customize settings for specific linters
-linters-settings:
-  errcheck:
-    check-type-assertions: true
-  govet:
-    check-shadowing: true
+formatters:
+  enable:
+    - gofmt
+    - goimports
+  settings:
+    gofmt:
+      simplify: true
+    goimports:
+      local-prefixes:
+        - github.com/undersleep7x/cryo-project
+  
