@@ -10,6 +10,11 @@ jobs:
   ci:
     runs-on: ubuntu-latest
 
+    env:
+      POSTGRES_USER: ${{ secrets.CRYO_POSTGRES_USER }}
+      POSTGRES_PASSWORD: ${{ secrets.CRYO_POSTGRES_PASSWORD }}
+      POSTGRES_DB: ${{ secrets.CRYO_POSTGRES_DB }}
+
     services:
       redis:
         image: redis:latest
