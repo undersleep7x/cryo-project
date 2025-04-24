@@ -29,11 +29,11 @@ docker-ci: docker-build docker-up lint test coverage docker-down
 
 # Build container
 docker-build:
-	docker compose build
+	docker compose build --no-cache
 
 # Start containers
 docker-up:
-	docker compose up -d
+	docker compose up
 
 # Tear down containers
 docker-down:
