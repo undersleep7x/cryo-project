@@ -1,6 +1,8 @@
 # 🧊CRYO🧊
 #### *A privacy-first cryptocurrency payment processor for all*
 
+#### *This project is on hold due to prioritization. Next Update ~ Q2 2026*
+
 This is the early development stage of a privacy-focused cryptocurrency payment processor that will provide secure, zero-trust peer-to-peer payments and merchant transactions in an engaging, easy-to-understand package for the everyday user. Utilizing end-to-end encryption, one-time addresses (OTAs), and anonymous transaction handling, maximum user security and privacy are at the forefront of every stage of development. Cryptocurrency and the blockchain are for you, the user, and you deserve the right to privacy over what is yours.
 
 ##### Jump to section
